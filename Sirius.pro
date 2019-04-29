@@ -33,7 +33,8 @@ SOURCES += \
     rectanglegraphicsview.cpp \
     trackinggraphicsview.cpp \
     statistics.cpp \
-    histgramwidget.cpp
+    histgramwidget.cpp \
+    channelwidget.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -44,12 +45,14 @@ HEADERS += \
     trackinggraphicsview.hpp \
     statistics.hpp \
     utility.hpp \
-    histgramwidget.hpp
+    histgramwidget.hpp \
+    channelwidget.hpp
 
 FORMS += \
     mainwindow.ui \
     navigatorwidget.ui \
-    histgramwidget.ui
+    histgramwidget.ui \
+    channelwidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

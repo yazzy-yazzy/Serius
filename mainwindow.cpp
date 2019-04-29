@@ -30,17 +30,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionMagnification, &QAction::triggered, this, &MainWindow::zoomMag);
     connect(ui->actionFitToWindow, &QAction::triggered, this, &MainWindow::fitToWindow);
 
-    connect(ui->graphicsView, &TrackingGraphicsView::viewportChanged, ui->navigatorWidget->view(), &NavigatorGraphicsView::drawViewport);
+    connect(ui->graphicsView, &TrackingGraphicsView::viewportChanged, ui->navigatorWidget->view(), &NavigatorGraphicsView::drawROI);
     connect(ui->graphicsView, &TrackingGraphicsView::scaleChanged, ui->navigatorWidget, &NavigatorWidget::setZoomF);
     connect(ui->graphicsView, &TrackingGraphicsView::entered, this, &MainWindow::enter);
     connect(ui->graphicsView, &TrackingGraphicsView::leaved, this, &MainWindow::leave);
     connect(ui->navigatorWidget, &NavigatorWidget::zoomChangedF, this, &MainWindow::zoom);
-    connect(ui->navigatorWidget->view(), &NavigatorGraphicsView::viewportChanged, this, &MainWindow::updateViewport);
+    connect(ui->navigatorWidget->view(), &NavigatorGraphicsView::roiChanged, this, &MainWindow::updateROI);
+    connect(ui->channelwidget, &ChannelWidget::stateChanged, this, &MainWindow::updateChannel);
 
     readSettings();
 }
 
-void MainWindow::updateViewport(const QRectF &sceneRect)
+void MainWindow::updateROI(const QRectF &sceneRect)
 {
     QPointF delta = recentSceneRect.topLeft() - sceneRect.topLeft();
 //    qDebug() << __PRETTY_FUNCTION__ << sceneRect << delta.manhattanLength();
@@ -48,6 +49,34 @@ void MainWindow::updateViewport(const QRectF &sceneRect)
         ui->graphicsView->ensureVisible(sceneRect,0,0);
         recentSceneRect = sceneRect;
     }
+}
+
+void MainWindow::updateChannel(int state)
+{
+    bool selectR = ui->channelwidget->contains(state, Channel::red);
+    bool selectG = ui->channelwidget->contains(state, Channel::green);
+    bool selectB = ui->channelwidget->contains(state, Channel::blue);
+
+    QImage tmp = image.copy();
+    for (int y = 0; y < tmp.height(); y++) {
+        for (int x = 0; x < tmp.width(); x++) {
+            QColor c = tmp.pixelColor(x, y);
+            if (!selectR)
+                c.setRed(0);
+            if (!selectG)
+                c.setGreen(0);
+            if (!selectB)
+                c.setBlue(0);
+            tmp.setPixelColor(x, y, c);
+        }
+    }
+
+    QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem();
+    pixmapItem->setTransformationMode(Qt::SmoothTransformation);
+    pixmapItem->setPixmap(QPixmap::fromImage(tmp));
+
+    scene->clear();
+    scene->addItem(pixmapItem);
 }
 
 void MainWindow::enter(const QPointF &scenePos)
@@ -106,6 +135,7 @@ void MainWindow::updateView()
 {
     ui->navigatorWidget->setEnabled(scene->isActive());
     ui->histgramWidget->setEnabled(scene->isActive());
+    ui->channelwidget->setEnabled(scene->isActive());
 }
 
 void MainWindow::updateAction()
@@ -173,6 +203,7 @@ void MainWindow::open()
         statusLLabel->setText(message);
 
         ui->histgramWidget->draw(image);
+        updateChannel(ui->channelwidget->state());
 
         updateView();
         updateAction();

@@ -12,10 +12,10 @@ public:
     explicit NavigatorGraphicsView(QWidget *parent = nullptr);
 
 public slots:
-    void drawViewport(const QRectF &sceneRect);
+    void drawROI(const QRectF &sceneRect);
 
 signals:
-    void viewportChanged(const QRectF &sceneRect);
+    void roiChanged(const QRectF &sceneRect);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

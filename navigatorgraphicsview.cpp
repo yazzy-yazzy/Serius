@@ -39,11 +39,11 @@ void NavigatorGraphicsView::mouseMoveEvent(QMouseEvent *event)
         int w = rubberBand->width();
         int h = rubberBand->height();
 
-        emit viewportChanged(mapToScene(QRect(x, y, w, h)).boundingRect());
+        emit roiChanged(mapToScene(QRect(x, y, w, h)).boundingRect());
     }
 }
 
-void NavigatorGraphicsView::drawViewport(const QRectF &sceneRect)
+void NavigatorGraphicsView::drawROI(const QRectF &sceneRect)
 {
     if (scene() && scene()->isActive() && scene()->items().size() > 0) {
         QRectF r = scene()->sceneRect();

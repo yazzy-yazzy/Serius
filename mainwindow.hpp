@@ -32,7 +32,8 @@ private slots:
 
     void updateView();
     void updateAction();
-    void updateViewport(const QRectF &sceneRect);
+    void updateROI(const QRectF &sceneRect);
+    void updateChannel(int state);
     void enter(const QPointF &scenePos);
     void leave();
 
