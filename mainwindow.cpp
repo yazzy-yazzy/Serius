@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->navigatorWidget->view()->setScene(scene);
 
     connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::open);
+    connect(ui->actionSaveAs, &QAction::triggered, this, &MainWindow::saveAs);
     connect(ui->actionZoomIn, &QAction::triggered, this, &MainWindow::zoomIn);
     connect(ui->actionZoomOut, &QAction::triggered, this, &MainWindow::zoomOut);
     connect(ui->actionMagnification, &QAction::triggered, this, &MainWindow::zoomMag);
@@ -104,6 +105,7 @@ void MainWindow::writeSettings()
 void MainWindow::updateView()
 {
     ui->navigatorWidget->setEnabled(scene->isActive());
+    ui->histgramWidget->setEnabled(scene->isActive());
 }
 
 void MainWindow::updateAction()
@@ -128,10 +130,10 @@ void MainWindow::open()
     dialog.selectMimeTypeFilter("image/jpeg");
 
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
-    QString recentOpenFile = settings.value("FileDialog/RecentOpenFile").toString();
-//    qDebug() << __PRETTY_FUNCTION__ << recentOpenFile;
-    if (!recentOpenFile.isEmpty() && QFileInfo::exists(recentOpenFile))
-        dialog.selectFile(recentOpenFile);
+    QString recentOpenDir = settings.value("FileDialog/RecentOpenDir").toString();
+//    qDebug() << __PRETTY_FUNCTION__ << recentOpenDir;
+    if (!recentOpenDir.isEmpty() && QFileInfo::exists(recentOpenDir))
+        dialog.setDirectory(recentOpenDir);
 
     if (QDialog::Accepted == dialog.exec()) {
         QString selectedFile = dialog.selectedFiles().first();
@@ -147,7 +149,7 @@ void MainWindow::open()
         }
 
         QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
-        settings.setValue("FileDialog/RecentOpenFile", selectedFile);
+        settings.setValue("FileDialog/RecentOpenDir", QFileInfo(selectedFile).dir().path());
 
         QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem();
         pixmapItem->setTransformationMode(Qt::SmoothTransformation);
@@ -170,10 +172,49 @@ void MainWindow::open()
             .arg(QDir::toNativeSeparators(selectedFile)).arg(image.width()).arg(image.height()).arg(image.depth());
         statusLLabel->setText(message);
 
+        ui->histgramWidget->draw(image);
+
         updateView();
         updateAction();
 
         fitToWindow();
+    }
+}
+
+void MainWindow::saveAs()
+{
+    QStringList mimeTypeFilters;
+    foreach (const QByteArray &mimeTypeName, QImageWriter::supportedMimeTypes())
+        mimeTypeFilters.append(mimeTypeName);
+    mimeTypeFilters.sort();
+
+    QFileDialog dialog(this, tr("Save File As"));
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setMimeTypeFilters(mimeTypeFilters);
+    dialog.setFileMode(QFileDialog::ExistingFile);
+    dialog.selectMimeTypeFilter("image/jpeg");
+    dialog.setDefaultSuffix("jpg");
+
+    QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+    QString recentSaveDir = settings.value("FileDialog/RecentSaveDir").toString();
+//    qDebug() << __PRETTY_FUNCTION__ << recentSaveDir;
+    if (!recentSaveDir.isEmpty() && QFileInfo::exists(recentSaveDir))
+        dialog.setDirectory(recentSaveDir);
+
+    if (QDialog::Accepted == dialog.exec()) {
+        QString selectedFile = dialog.selectedFiles().first();
+
+        QImageWriter writer(selectedFile);
+
+        if (!writer.write(image)) {
+            QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
+                                     tr("Cannot write %1: %2")
+                                     .arg(QDir::toNativeSeparators(selectedFile)), writer.errorString());
+            return;
+        }
+
+        QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+        settings.setValue("FileDialog/RecentSaveDir", QFileInfo(selectedFile).dir().path());
     }
 }
 

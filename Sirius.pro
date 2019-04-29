@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -31,7 +31,9 @@ SOURCES += \
     navigatorrubberband.cpp \
     navigatorwidget.cpp \
     rectanglegraphicsview.cpp \
-    trackinggraphicsview.cpp
+    trackinggraphicsview.cpp \
+    statistics.cpp \
+    histgramwidget.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -39,13 +41,20 @@ HEADERS += \
     navigatorrubberband.hpp \
     navigatorwidget.hpp \
     rectanglegraphicsview.hpp \
-    trackinggraphicsview.hpp
+    trackinggraphicsview.hpp \
+    statistics.hpp \
+    utility.hpp \
+    histgramwidget.hpp
 
 FORMS += \
     mainwindow.ui \
-    navigatorwidget.ui
+    navigatorwidget.ui \
+    histgramwidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    resource.qrc

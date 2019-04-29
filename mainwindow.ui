@@ -19,8 +19,12 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resource.qrc">
+    <normaloff>:/images/app</normaloff>:/images/app</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <widget class="TrackingGraphicsView" name="graphicsView">
       <property name="renderHints">
@@ -44,6 +48,7 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen"/>
+    <addaction name="actionSaveAs"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -61,7 +66,7 @@
    <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QDockWidget" name="dockWidget">
+  <widget class="QDockWidget" name="dockWidget1">
    <property name="sizePolicy">
     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
      <horstretch>0</horstretch>
@@ -91,6 +96,21 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
      <item>
       <widget class="NavigatorWidget" name="navigatorWidget" native="true">
        <property name="enabled">
@@ -114,6 +134,52 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="dockWidget2">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>240</width>
+     <height>524287</height>
+    </size>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::RightDockWidgetArea</set>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents2">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="HistgramWidget" name="histgramWidget" native="true">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionOpen">
    <property name="text">
     <string>Open...</string>
@@ -131,6 +197,10 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/zoom-in</normaloff>:/images/zoom-in</iconset>
+   </property>
    <property name="text">
     <string>Zoom In</string>
    </property>
@@ -141,6 +211,10 @@
   <action name="actionZoomOut">
    <property name="enabled">
     <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/zoom-out</normaloff>:/images/zoom-out</iconset>
    </property>
    <property name="text">
     <string>Zoom Out</string>
@@ -153,6 +227,10 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/zoom-100%</normaloff>:/images/zoom-100%</iconset>
+   </property>
    <property name="text">
     <string>100%</string>
    </property>
@@ -164,11 +242,20 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/zoom-fit</normaloff>:/images/zoom-fit</iconset>
+   </property>
    <property name="text">
     <string>Fit to Wondow</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionSaveAs">
+   <property name="text">
+    <string>SaveAs...</string>
    </property>
   </action>
  </widget>
@@ -185,8 +272,16 @@
    <header>navigatorwidget.hpp</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>HistgramWidget</class>
+   <extends>QWidget</extends>
+   <header>histgramwidget.hpp</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionExit</sender>

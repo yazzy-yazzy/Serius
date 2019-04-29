@@ -23,6 +23,7 @@ protected:
 
 private slots:
     void open();
+    void saveAs();
     void zoom(qreal coeff);
     void zoomIn();
     void zoomOut();
