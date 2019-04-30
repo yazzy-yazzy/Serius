@@ -14,7 +14,6 @@ void TrackingGraphicsView::paintEvent(QPaintEvent *event)
 
         if (recentSceneRect != sceneRect) {
             emit viewportChanged(sceneRect);
-//            qDebug() << __PRETTY_FUNCTION__ << sceneRect;
             recentSceneRect = sceneRect;
         }
 
@@ -34,8 +33,6 @@ void TrackingGraphicsView::scaleEx(qreal s)
 
 void TrackingGraphicsView::mouseMoveEvent(QMouseEvent *event)
 {
-//    qDebug() << __PRETTY_FUNCTION__ << event;
-
     if (scene() && scene()->isActive() && scene()->items().size() > 0) {
 //        if (viewport()->geometry().contains(event->pos()))
             emit entered(mapToScene(event->pos()));
@@ -46,22 +43,16 @@ void TrackingGraphicsView::mouseMoveEvent(QMouseEvent *event)
 
 void TrackingGraphicsView::mousePressEvent(QMouseEvent *event)
 {
-//    qDebug() << __PRETTY_FUNCTION__ << event;
-
     QGraphicsView::mousePressEvent(event);
 }
 
 void TrackingGraphicsView::mouseReleaseEvent(QMouseEvent *event)
 {
-//    qDebug() << __PRETTY_FUNCTION__ << event;
-
     QGraphicsView::mouseReleaseEvent(event);
 }
 
 bool TrackingGraphicsView::event(QEvent *event)
 {
-//    qDebug() << __PRETTY_FUNCTION__ << event;
-
     if (event->type() == QEvent::Leave)
         emit leaved();
 

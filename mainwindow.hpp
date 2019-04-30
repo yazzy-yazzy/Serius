@@ -36,6 +36,7 @@ private slots:
     void updateChannel(int state);
     void enter(const QPointF &scenePos);
     void leave();
+    void updateDock();
 
 private:
     void readSettings();

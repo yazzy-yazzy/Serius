@@ -10,8 +10,6 @@ RectangleGraphicsView::RectangleGraphicsView(QWidget *parent) : QGraphicsView(pa
 
 void RectangleGraphicsView::drawRectangle(const QRect &sceneRect)
 {
-//    qDebug() << __PRETTY_FUNCTION__ << sceneRect;
-
     recentSceneRect = sceneRect;
 
     if (scene() && scene()->isActive())
@@ -33,8 +31,6 @@ QPen RectangleGraphicsView::pen() const
 
 void RectangleGraphicsView::paintEvent(QPaintEvent *event)
 {
-//    qDebug() << __PRETTY_FUNCTION__ << _recentRect;
-
     QGraphicsView::paintEvent(event);
 
     if (scene() && scene()->isActive() && scene()->items().size() > 0) {

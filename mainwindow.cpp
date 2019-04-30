@@ -9,8 +9,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(QCoreApplication::applicationName());
-
     scene = new QGraphicsScene(this);
     statusLLabel = new QLabel();
     statusLLabel->setAlignment(Qt::AlignLeft);
@@ -29,6 +27,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionZoomOut, &QAction::triggered, this, &MainWindow::zoomOut);
     connect(ui->actionMagnification, &QAction::triggered, this, &MainWindow::zoomMag);
     connect(ui->actionFitToWindow, &QAction::triggered, this, &MainWindow::fitToWindow);
+    connect(ui->actionDisplayDock1, &QAction::triggered, this, &MainWindow::updateDock);
+    connect(ui->actionDisplayDock2, &QAction::triggered, this, &MainWindow::updateDock);
+    connect(ui->actionDisplayDock3, &QAction::triggered, this, &MainWindow::updateDock);
 
     connect(ui->graphicsView, &TrackingGraphicsView::viewportChanged, ui->navigatorWidget->view(), &NavigatorGraphicsView::drawROI);
     connect(ui->graphicsView, &TrackingGraphicsView::scaleChanged, ui->navigatorWidget, &NavigatorWidget::setZoomF);
@@ -39,12 +40,27 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->channelwidget, &ChannelWidget::stateChanged, this, &MainWindow::updateChannel);
 
     readSettings();
+
+    setUnifiedTitleAndToolBarOnMac(true);
+    setWindowTitle(QCoreApplication::applicationName());
+
+    show();
+
+    ui->actionDisplayDock1->setChecked(ui->dockWidget1->isVisible());
+    ui->actionDisplayDock2->setChecked(ui->dockWidget2->isVisible());
+    ui->actionDisplayDock3->setChecked(ui->dockWidget3->isVisible());
+}
+
+void MainWindow::updateDock()
+{
+    ui->dockWidget1->setVisible(ui->actionDisplayDock1->isChecked());
+    ui->dockWidget2->setVisible(ui->actionDisplayDock2->isChecked());
+    ui->dockWidget3->setVisible(ui->actionDisplayDock3->isChecked());
 }
 
 void MainWindow::updateROI(const QRectF &sceneRect)
 {
     QPointF delta = recentSceneRect.topLeft() - sceneRect.topLeft();
-//    qDebug() << __PRETTY_FUNCTION__ << sceneRect << delta.manhattanLength();
     if (delta.manhattanLength() > 10.0) {
         ui->graphicsView->ensureVisible(sceneRect,0,0);
         recentSceneRect = sceneRect;
@@ -85,10 +101,14 @@ void MainWindow::enter(const QPointF &scenePos)
     int x = scenePos.toPoint().x();
     int y = scenePos.toPoint().y();
 
-    if (r.contains(x, y))
-        statusRLabel->setText(tr("(%1,%2)").arg(x).arg(y));
-    else
+    if (!r.contains(x, y)) {
         leave();
+        return;
+    }
+
+    QColor c = image.pixelColor(x, y);
+    QString message(tr("(%1,%2) R:%3 G:%4 B:%5").arg(x).arg(y).arg(c.red()).arg(c.green()).arg(c.blue()));
+    statusRLabel->setText(message);
 }
 
 void MainWindow::leave()
@@ -119,9 +139,9 @@ void MainWindow::readSettings()
         restoreGeometry(geometry);
     }
 
-//    const QByteArray windowState = settings.value("MainWindow/windowState", QByteArray()).toByteArray();
-//    if (!windowState.isEmpty())
-//        restoreState(windowState);
+    const QByteArray windowState = settings.value("MainWindow/windowState", QByteArray()).toByteArray();
+    if (!windowState.isEmpty())
+        restoreState(windowState);
 }
 
 void MainWindow::writeSettings()
@@ -161,7 +181,6 @@ void MainWindow::open()
 
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     QString recentOpenDir = settings.value("FileDialog/RecentOpenDir").toString();
-//    qDebug() << __PRETTY_FUNCTION__ << recentOpenDir;
     if (!recentOpenDir.isEmpty() && QFileInfo::exists(recentOpenDir))
         dialog.setDirectory(recentOpenDir);
 
@@ -228,7 +247,6 @@ void MainWindow::saveAs()
 
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     QString recentSaveDir = settings.value("FileDialog/RecentSaveDir").toString();
-//    qDebug() << __PRETTY_FUNCTION__ << recentSaveDir;
     if (!recentSaveDir.isEmpty() && QFileInfo::exists(recentSaveDir))
         dialog.setDirectory(recentSaveDir);
 
