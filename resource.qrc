@@ -5,5 +5,12 @@
         <file alias="zoom-in">assets/image/zoom-in-2.png</file>
         <file alias="zoom-100%">assets/image/zoom-original.png</file>
         <file alias="zoom-out">assets/image/zoom-out-2.png</file>
+        <file alias="preference">assets/image/configure-2.png</file>
+        <file alias="open">assets/image/document-open-8.png</file>
+        <file alias="save">assets/image/document-save-2.png</file>
+        <file alias="tone-curve">assets/image/office-chart-area-stacked.png</file>
+        <file alias="desktop">assets/image/preferences-desktop-4.png</file>
+        <file alias="language">assets/image/applications-education-language.png</file>
+        <file alias="system">assets/image/applications-system.png</file>
     </qresource>
 </RCC>

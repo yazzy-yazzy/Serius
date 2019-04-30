@@ -49,6 +49,9 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="maxLength">
         <number>4</number>
        </property>

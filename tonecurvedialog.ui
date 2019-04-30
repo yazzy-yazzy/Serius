@@ -7,11 +7,15 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>640</height>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Tone Curve</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resource.qrc">
+    <normaloff>:/images/tone-curve</normaloff>:/images/tone-curve</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -117,6 +121,9 @@
             <width>60</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="maxLength">
            <number>3</number>
@@ -254,6 +261,9 @@
               <height>16777215</height>
              </size>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="maxLength">
              <number>3</number>
             </property>
@@ -296,13 +306,6 @@
     </widget>
    </item>
    <item>
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -322,7 +325,9 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

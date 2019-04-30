@@ -36,6 +36,9 @@
    </item>
    <item row="1" column="1">
     <widget class="QLineEdit" name="editMean">
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
@@ -53,6 +56,9 @@
    </item>
    <item row="2" column="1">
     <widget class="QLineEdit" name="editStdDev">
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
@@ -63,6 +69,9 @@
    </item>
    <item row="3" column="1" rowspan="2">
     <widget class="QLineEdit" name="editMedian">
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
@@ -87,6 +96,9 @@
    </item>
    <item row="5" column="1">
     <widget class="QLineEdit" name="editPixels">
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>

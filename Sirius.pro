@@ -40,7 +40,8 @@ SOURCES += \
     tonecurvewidget.cpp \
     trackingsplineseries.cpp \
     trackingchartview.cpp \
-    trackingchartevent.cpp
+    trackingchartevent.cpp \
+    preferencedialog.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -58,7 +59,8 @@ HEADERS += \
     tonecurvewidget.hpp \
     trackingsplineseries.hpp \
     trackingchartview.hpp \
-    trackingchartevent.hpp
+    trackingchartevent.hpp \
+    preferencedialog.hpp
 
 FORMS += \
     mainwindow.ui \
@@ -66,7 +68,8 @@ FORMS += \
     histgramwidget.ui \
     channelwidget.ui \
     tonecurvedialog.ui \
-    tonecurvewidget.ui
+    tonecurvewidget.ui \
+    preferencedialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

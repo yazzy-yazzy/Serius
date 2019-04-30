@@ -2,7 +2,9 @@
 #include "ui_mainwindow.h"
 
 #include <QtWidgets>
+
 #include "tonecurvedialog.hpp"
+#include "preferencedialog.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -32,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionDisplayDock1, &QAction::triggered, this, &MainWindow::updateDock);
     connect(ui->actionDisplayDock2, &QAction::triggered, this, &MainWindow::updateDock);
     connect(ui->actionDisplayDock3, &QAction::triggered, this, &MainWindow::updateDock);
+    connect(ui->actionPreference, &QAction::triggered, this, &MainWindow::preference);
 
     connect(ui->graphicsView, &TrackingGraphicsView::viewportChanged, ui->navigatorWidget->view(), &NavigatorGraphicsView::drawROI);
     connect(ui->graphicsView, &TrackingGraphicsView::scaleChanged, ui->navigatorWidget, &NavigatorWidget::setZoomF);
@@ -51,6 +54,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionDisplayDock1->setChecked(ui->dockWidget1->isVisible());
     ui->actionDisplayDock2->setChecked(ui->dockWidget2->isVisible());
     ui->actionDisplayDock3->setChecked(ui->dockWidget3->isVisible());
+}
+
+void MainWindow::preference()
+{
+    PreferenceDialog dialog;
+
+    if (QDialog::Accepted == dialog.exec()) {
+        //TODO
+    }
 }
 
 void MainWindow::toneCurve()
@@ -171,6 +183,7 @@ void MainWindow::updateView()
 
 void MainWindow::updateAction()
 {
+    ui->actionSaveAs->setEnabled(scene->isActive());
     ui->actionZoomIn->setEnabled(scene->isActive());
     ui->actionZoomOut->setEnabled(scene->isActive());
     ui->actionMagnification->setEnabled(scene->isActive());
