@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include <QtWidgets>
+#include "tonecurvedialog.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -27,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionZoomOut, &QAction::triggered, this, &MainWindow::zoomOut);
     connect(ui->actionMagnification, &QAction::triggered, this, &MainWindow::zoomMag);
     connect(ui->actionFitToWindow, &QAction::triggered, this, &MainWindow::fitToWindow);
+    connect(ui->actionToneCurve, &QAction::triggered, this, &MainWindow::toneCurve);
     connect(ui->actionDisplayDock1, &QAction::triggered, this, &MainWindow::updateDock);
     connect(ui->actionDisplayDock2, &QAction::triggered, this, &MainWindow::updateDock);
     connect(ui->actionDisplayDock3, &QAction::triggered, this, &MainWindow::updateDock);
@@ -49,6 +51,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionDisplayDock1->setChecked(ui->dockWidget1->isVisible());
     ui->actionDisplayDock2->setChecked(ui->dockWidget2->isVisible());
     ui->actionDisplayDock3->setChecked(ui->dockWidget3->isVisible());
+}
+
+void MainWindow::toneCurve()
+{
+    ToneCurveDialog dialog;
+
+    if (QDialog::Accepted == dialog.exec()) {
+        //TODO
+    }
 }
 
 void MainWindow::updateDock()
@@ -164,6 +175,7 @@ void MainWindow::updateAction()
     ui->actionZoomOut->setEnabled(scene->isActive());
     ui->actionMagnification->setEnabled(scene->isActive());
     ui->actionFitToWindow->setEnabled(scene->isActive());
+    ui->actionToneCurve->setEnabled(scene->isActive());
 }
 
 void MainWindow::open()

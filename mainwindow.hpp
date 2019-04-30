@@ -29,6 +29,7 @@ private slots:
     void zoomOut();
     void zoomMag();
     void fitToWindow();
+    void toneCurve();
 
     void updateView();
     void updateAction();

@@ -34,7 +34,13 @@ SOURCES += \
     trackinggraphicsview.cpp \
     statistics.cpp \
     histgramwidget.cpp \
-    channelwidget.cpp
+    channelwidget.cpp \
+    tonecurvedialog.cpp \
+    memorizedialog.cpp \
+    tonecurvewidget.cpp \
+    trackingsplineseries.cpp \
+    trackingchartview.cpp \
+    trackingchartevent.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -46,13 +52,21 @@ HEADERS += \
     statistics.hpp \
     utility.hpp \
     histgramwidget.hpp \
-    channelwidget.hpp
+    channelwidget.hpp \
+    tonecurvedialog.hpp \
+    memorizedialog.hpp \
+    tonecurvewidget.hpp \
+    trackingsplineseries.hpp \
+    trackingchartview.hpp \
+    trackingchartevent.hpp
 
 FORMS += \
     mainwindow.ui \
     navigatorwidget.ui \
     histgramwidget.ui \
-    channelwidget.ui
+    channelwidget.ui \
+    tonecurvedialog.ui \
+    tonecurvewidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

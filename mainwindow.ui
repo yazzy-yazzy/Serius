@@ -70,8 +70,15 @@
     <addaction name="actionDisplayDock2"/>
     <addaction name="actionDisplayDock3"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionToneCurve"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
+   <addaction name="menuEdit"/>
    <addaction name="menuWindow"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -238,6 +245,9 @@
    <property name="text">
     <string>Open...</string>
    </property>
+   <property name="toolTip">
+    <string>Open an existing file</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
@@ -245,6 +255,9 @@
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+   <property name="toolTip">
+    <string>Exit this application</string>
    </property>
   </action>
   <action name="actionZoomIn">
@@ -257,6 +270,9 @@
    </property>
    <property name="text">
     <string>Zoom In</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom in</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+;</string>
@@ -273,6 +289,9 @@
    <property name="text">
     <string>Zoom Out</string>
    </property>
+   <property name="toolTip">
+    <string>Zoom out</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+-</string>
    </property>
@@ -287,6 +306,9 @@
    </property>
    <property name="text">
     <string>100%</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom 100%</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -303,6 +325,9 @@
    <property name="text">
     <string>Fit to Wondow</string>
    </property>
+   <property name="toolTip">
+    <string>Fit to window</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
    </property>
@@ -310,6 +335,9 @@
   <action name="actionSaveAs">
    <property name="text">
     <string>SaveAs...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save an displaying image</string>
    </property>
   </action>
   <action name="actionDisplayDock1">
@@ -321,6 +349,9 @@
    </property>
    <property name="text">
     <string>Dock1</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or hide</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+1</string>
@@ -336,6 +367,9 @@
    <property name="text">
     <string>Dock2</string>
    </property>
+   <property name="toolTip">
+    <string>Show or hide</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+2</string>
    </property>
@@ -350,8 +384,25 @@
    <property name="text">
     <string>Dock3</string>
    </property>
+   <property name="toolTip">
+    <string>Show or hide</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+3</string>
+   </property>
+  </action>
+  <action name="actionToneCurve">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Tone Curve...</string>
+   </property>
+   <property name="toolTip">
+    <string>Adjust tonecurve</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
  </widget>
