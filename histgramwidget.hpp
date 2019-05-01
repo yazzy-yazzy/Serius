@@ -18,6 +18,11 @@ public:
     explicit HistgramWidget(QWidget *parent = nullptr);
     ~HistgramWidget();
 
+    Statistics statisticsL() const;
+    Statistics statisticsR() const;
+    Statistics statisticsG() const;
+    Statistics statisticsB() const;
+
 public slots:
     void draw(const QImage &image);
     void clear();
@@ -36,10 +41,10 @@ private:
     QValueAxis *axisX;
     QValueAxis *axisY;
 
-    Statistics statisticsL;
-    Statistics statisticsR;
-    Statistics statisticsG;
-    Statistics statisticsB;
+    Statistics statL;
+    Statistics statR;
+    Statistics statG;
+    Statistics statB;
 };
 
 #endif // HISTGRAMWIDGET_HPP

@@ -8,10 +8,16 @@ static bool lessThan(const QPointF &l, const QPointF &r)
     return l.x() < r.x();
 }
 
+static const qreal INFINITE = std::numeric_limits<qreal>::max();
+static const qreal TOLERANCE_DELTA = 5.0;
+
 TrackingSplineSeries::TrackingSplineSeries(QObject *parent) : QSplineSeries(parent)
 {
     startPos = QPointF();
     currentPos = QPointF();
+
+    connect(this, &QSplineSeries::pointAdded, this, &TrackingSplineSeries::addPoint);
+    connect(this, &QSplineSeries::pointRemoved, this, &TrackingSplineSeries::removePoint);
 }
 
 void TrackingSplineSeries::customEvent(QEvent *event)
@@ -30,60 +36,89 @@ void TrackingSplineSeries::customEvent(QEvent *event)
     event->accept();
 }
 
-void TrackingSplineSeries::mousePressEvent(const QPointF &point)
+void TrackingSplineSeries::mousePressEvent(const QPointF &pos)
 {
-    startPos = nearestPoint(point);
+    startPos = nearestPoint(pos, TOLERANCE_DELTA);
 
-    emit mousePressed(point);
+    emit mousePressed(pos);
 }
 
-void TrackingSplineSeries::mouseMoveEvent(const QPointF &point)
+void TrackingSplineSeries::mouseMoveEvent(const QPointF &pos)
 {
     if (!startPos.isNull()) {
-        replace(startPos.x(), startPos.y(), point.x(), point.y());
+        replace(startPos.x(), startPos.y(), pos.x(), pos.y());
 
-        startPos = point;
-        currentPos = point;
+        startPos = pos;
+        currentPos = pos;
 
-        emit mouseMoved(point);
+        emit mouseMoved(pos);
     }
 }
 
 void TrackingSplineSeries::mouseReleaseEvent(const QPointF &pos)
 {
     QList<QPointF> list = points();
-    if (startPos.isNull() && nearestPoint(pos).isNull())
+    if (startPos.isNull() && nearestPoint(pos, TOLERANCE_DELTA).isNull())
         list.append(pos);
     else
         list.replace(list.indexOf(startPos), pos);
 
     std::sort(list.begin(), list.end(), lessThan);
 
-    clear();
-    append(list);
-
     startPos = QPointF();
     currentPos = pos;
+
+    clear();
+    append(list);
 
     emit mouseReleased(pos);
 }
 
-QPointF TrackingSplineSeries::nearestPoint(const QPointF &point) const
+QPointF TrackingSplineSeries::nearestPoint(const QPointF &pos) const
 {
-    foreach (QPointF r, points()) {
-        QPointF delta = r - point;
-        if (delta.manhattanLength() < 5.0)
-            return r;
+    return nearestPoint(pos, INFINITE);
+}
+
+QPointF TrackingSplineSeries::nearestPoint(const QPointF &pos, qreal delta) const
+{
+    QMap<int, qreal> map;
+    for (int i = 0; i < points().size(); i++) {
+        QPointF diff = points().at(i) - pos;
+        map.insert(i, diff.manhattanLength());
     }
+
+    QList<qreal> list = map.values();
+    std::sort(list.begin(), list.end());
+
+    foreach (qreal manhattanLength, list) {
+        if (manhattanLength < delta)
+            return points().at(map.key(manhattanLength));
+    }
+
     return QPointF();
 }
 
-bool TrackingSplineSeries::isPoint(const QPointF &point) const
+bool TrackingSplineSeries::isPoint(const QPointF &pos) const
 {
-    return !nearestPoint(point).isNull();
+    return !nearestPoint(pos, TOLERANCE_DELTA).isNull();
 }
 
 const QPointF &TrackingSplineSeries::currentPoint() const
 {
     return currentPos;
+}
+
+void TrackingSplineSeries::addPoint(int index)
+{
+    Q_UNUSED(index);
+
+    emit selectionChanged(currentPos);
+}
+
+void TrackingSplineSeries::removePoint(int index)
+{
+    Q_UNUSED(index);
+
+    currentPos = (points().size() > 0 ? nearestPoint(currentPos) : QPointF());
+    emit selectionChanged(currentPos);
 }

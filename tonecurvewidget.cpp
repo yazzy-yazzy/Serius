@@ -1,6 +1,8 @@
 #include "tonecurvewidget.hpp"
 #include "ui_tonecurvewidget.h"
 
+#include "trackingsplineseries.hpp"
+
 ToneCurveWidget::ToneCurveWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ToneCurveWidget)
@@ -8,7 +10,9 @@ ToneCurveWidget::ToneCurveWidget(QWidget *parent) :
     ui->setupUi(this);
 
     createChart();
+    createHistgram();
     createBaseline();
+    createToneCurve();
 
     //setup gradation label
     ui->vGradationLabel->setStyleSheet("background:qlineargradient(x1:1, y1:0, x2:0, y2:0,"
@@ -20,6 +24,8 @@ ToneCurveWidget::ToneCurveWidget(QWidget *parent) :
     ui->chartView->setChart(chart);
     ui->chartView->setRenderHint(QPainter::Antialiasing);
     ui->chartView->setContentsMargins(QMargins());
+
+    ui->chartView->setTargetSeries(toneCurveSeries);
 }
 
 ToneCurveWidget::~ToneCurveWidget()
@@ -68,6 +74,7 @@ void ToneCurveWidget::createChart()
     axisHistgramY->setLabelsVisible(false);
 
     chart = new QChart();
+    chart->setAnimationOptions(QChart::AllAnimations);  //TBD
     chart->addAxis(axisToneCurveX, Qt::AlignBottom);
     chart->addAxis(axisToneCurveY, Qt::AlignLeft);
     chart->addAxis(axisHistgramX, Qt::AlignBottom);
@@ -94,6 +101,41 @@ void ToneCurveWidget::createBaseline()
     baselineSeries->attachAxis(axisToneCurveY);
 }
 
+void ToneCurveWidget::createToneCurve()
+{
+    QPen pen;
+    pen.setColor(Qt::gray);
+    pen.setWidth(2);
+
+    toneCurveSeries = new TrackingSplineSeries();
+    toneCurveSeries->setPen(pen);
+    toneCurveSeries->append(0, 0);
+    toneCurveSeries->append(255, 255);
+    toneCurveSeries->setPointsVisible(true);
+//    toneCurveSeries->setPointLabelsVisible(true);
+//    toneCurveSeries->setPointLabelsFormat("(@xPoint, @yPoint)");
+
+    chart->addSeries(toneCurveSeries);
+    toneCurveSeries->attachAxis(axisToneCurveX);
+    toneCurveSeries->attachAxis(axisToneCurveY);
+
+    connect(toneCurveSeries, SIGNAL(selectionChanged(QPointF)), this, SIGNAL(selectionChanged(QPointF)));
+}
+
+void ToneCurveWidget::createHistgram()
+{
+    QBarSet *bar = new QBarSet("Histgram");
+    bar->setColor(Qt::darkGray);
+
+    histgramSeries = new QBarSeries();
+    histgramSeries->setBarWidth(1);
+    histgramSeries->append(bar);
+
+    chart->addSeries(histgramSeries);
+    histgramSeries->attachAxis(axisHistgramX);
+    histgramSeries->attachAxis(axisHistgramY);
+}
+
 void ToneCurveWidget::setBaselineVisible(bool visible)
 {
     baselineSeries->setVisible(visible);
@@ -101,10 +143,79 @@ void ToneCurveWidget::setBaselineVisible(bool visible)
 
 void ToneCurveWidget::setHistgramVisible(bool visible)
 {
-    //TODO
+    histgramSeries->setVisible(visible);
 }
 
 void ToneCurveWidget::removeCurrentPoint()
 {
+    if (!toneCurveSeries->currentPoint().isNull())
+        toneCurveSeries->remove(toneCurveSeries->currentPoint());
+}
 
+void ToneCurveWidget::clear()
+{
+    toneCurveSeries->clear();
+    toneCurveSeries->append(0, 0);
+    toneCurveSeries->append(255, 255);
+
+    emit selectionChanged(QPointF());
+}
+
+QList<QPointF> ToneCurveWidget::points() const
+{
+    return toneCurveSeries->points();
+}
+
+void ToneCurveWidget::setBaselineColor(QColor color)
+{
+    baselineSeries->setColor(color);
+}
+
+QColor ToneCurveWidget::baselineColor() const
+{
+    return baselineSeries->color();
+}
+
+void ToneCurveWidget::setToneCurveColor(QColor color)
+{
+    toneCurveSeries->setColor(color);
+}
+
+QColor ToneCurveWidget::toneCurveColor() const
+{
+    return toneCurveSeries->color();
+}
+
+void ToneCurveWidget::setHistgramColor(QColor color)
+{
+    foreach (QBarSet *bar, histgramSeries->barSets())
+        bar->setColor(color);
+}
+
+QColor ToneCurveWidget::histgramColor() const
+{
+    return histgramSeries->barSets().first()->color();
+}
+
+void ToneCurveWidget::setHistgram(const Statistics &statistics)
+{
+    axisHistgramY->setRange(0, static_cast<qreal>(statistics.histgramMax()));
+
+    QBarSet *bar = histgramSeries->barSets().first();
+    for (int i = 0; i < 256; i++)
+        bar->insert(i, statistics.histgram(i));
+}
+
+void ToneCurveWidget::setPoints(const QList<QPointF> &points)
+{
+    toneCurveSeries->clear();
+
+    if (points.empty()) {
+        toneCurveSeries->append(0, 0);
+        toneCurveSeries->append(255, 255);
+    } else {
+        toneCurveSeries->append(points);
+    }
+
+    emit selectionChanged(QPointF());
 }

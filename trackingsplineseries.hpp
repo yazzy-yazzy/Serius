@@ -22,14 +22,20 @@ signals:
     void mousePressed(const QPointF &pos);
     void mouseMoved(const QPointF &pos);
     void mouseReleased(const QPointF &pos);
+    void selectionChanged(const QPointF &pos);
+
+private slots:
+    void addPoint(int index);
+    void removePoint(int index);
 
 private:
     void mousePressEvent(const QPointF &pos);
     void mouseMoveEvent(const QPointF &pos);
     void mouseReleaseEvent(const QPointF &pos);
     bool isPoint(const QPointF &pos) const;
-    QPointF nearestPoint(const QPointF &pos) const;
     bool isEditable(const QPointF &pos) const;
+    QPointF nearestPoint(const QPointF &pos) const;
+    QPointF nearestPoint(const QPointF &pos, qreal delta) const;
 
 private:
     QPointF startPos;

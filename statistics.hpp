@@ -7,6 +7,9 @@ class Statistics
 {
 public:
     Statistics();
+    Statistics(const Statistics &x);
+
+    Statistics &operator=(const Statistics &x);
 
     void append(int value);
     void update();

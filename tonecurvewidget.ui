@@ -30,7 +30,7 @@
     <number>0</number>
    </property>
    <item row="0" column="1">
-    <widget class="QChartView" name="chartView">
+    <widget class="TrackingChartView" name="chartView">
      <property name="verticalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
@@ -84,9 +84,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QChartView</class>
+   <class>TrackingChartView</class>
    <extends>QGraphicsView</extends>
-   <header>QtCharts</header>
+   <header>trackingchartview.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -2,23 +2,12 @@
 #define CHANNELWIDGET_HPP
 
 #include <QWidget>
+#include "channel.hpp"
 
 QT_FORWARD_DECLARE_CLASS(QCheckBox);
 
 namespace Ui {
 class ChannelWidget;
-}
-
-namespace Channel {
-    enum Color {
-        red = 0x1,
-        green = 0x2,
-        blue = 0x4,
-        cyan = 0x10,
-        yellow = 0x20,
-        magenta = 0x40,
-        black = 0x80
-    };
 }
 
 class ChannelWidget : public QWidget

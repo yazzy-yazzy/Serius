@@ -41,7 +41,8 @@ SOURCES += \
     trackingsplineseries.cpp \
     trackingchartview.cpp \
     trackingchartevent.cpp \
-    preferencedialog.cpp
+    preferencedialog.cpp \
+    utility.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -60,7 +61,9 @@ HEADERS += \
     trackingsplineseries.hpp \
     trackingchartview.hpp \
     trackingchartevent.hpp \
-    preferencedialog.hpp
+    preferencedialog.hpp \
+    singleton.hpp \
+    channel.hpp
 
 FORMS += \
     mainwindow.ui \

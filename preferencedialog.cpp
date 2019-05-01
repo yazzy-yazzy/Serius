@@ -24,7 +24,7 @@ void PreferenceDialog::updateStyle(int index)
 {
     QStyle *style = QStyleFactory::create(ui->styleComboBox->itemText(index));
 
-//    qApp->setPalette(style->standardPalette());
+    qApp->setPalette(style->standardPalette());
     qApp->setStyleSheet("");
     qApp->setStyle(style);
 }

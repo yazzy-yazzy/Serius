@@ -1,25 +1,32 @@
 #include "statistics.hpp"
 
 #include <QtCore>
-
 #include <type_traits>
 
-template <typename T, int nSize>
-T getMedian(T histgram[], T count)
-{
-    auto refCount = 0;
-    auto medianIndex = count / 2;
-    for (auto i = 0; i < nSize; i++) {
-        refCount += histgram[i];
-        if (refCount >= medianIndex)
-            return i;
-    }
-    return 0;
-}
+#include "utility.hpp"
 
 Statistics::Statistics()
 {
     clear();
+}
+
+Statistics::Statistics(const Statistics &x)
+{
+    *this = x;
+}
+
+Statistics &Statistics::operator=(const Statistics &x)
+{
+    _count = x._count;
+    for (int i = 0; i < 256; i++)
+        _histgram[i] = x._histgram[i];
+    _sum = x._sum;
+    _variance = x._variance;
+    _mean = x._mean;
+    _median = x._median;
+    _min = x._min;
+    _max = x._max;
+    return *this;
 }
 
 void Statistics::clear()
@@ -46,7 +53,7 @@ void Statistics::append(int value)
 
 void Statistics::update()
 {
-    _median = getMedian<int, 256>(_histgram, _count);
+    _median = Utility::findMedian(_histgram, _count);
     _mean = _sum / _count;
     _variance = (_variance / _count) - (_mean * _mean);
 }

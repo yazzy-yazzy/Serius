@@ -3,8 +3,9 @@
 
 #include <QtWidgets>
 
-#include "tonecurvedialog.hpp"
 #include "preferencedialog.hpp"
+#include "tonecurvedialog.hpp"
+#include "utility.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -54,24 +55,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionDisplayDock1->setChecked(ui->dockWidget1->isVisible());
     ui->actionDisplayDock2->setChecked(ui->dockWidget2->isVisible());
     ui->actionDisplayDock3->setChecked(ui->dockWidget3->isVisible());
-}
-
-void MainWindow::preference()
-{
-    PreferenceDialog dialog;
-
-    if (QDialog::Accepted == dialog.exec()) {
-        //TODO
-    }
-}
-
-void MainWindow::toneCurve()
-{
-    ToneCurveDialog dialog;
-
-    if (QDialog::Accepted == dialog.exec()) {
-        //TODO
-    }
 }
 
 void MainWindow::updateDock()
@@ -214,6 +197,7 @@ void MainWindow::open()
 
         QImageReader reader(selectedFile);
         reader.setAutoTransform(false);
+
         image = reader.read();
         if (image.isNull()) {
             QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
@@ -277,7 +261,6 @@ void MainWindow::saveAs()
 
     if (QDialog::Accepted == dialog.exec()) {
         QString selectedFile = dialog.selectedFiles().first();
-
         QImageWriter writer(selectedFile);
 
         if (!writer.write(image)) {
@@ -323,3 +306,49 @@ void MainWindow::fitToWindow()
     ui->graphicsView->resetMatrix();
     ui->graphicsView->scaleEx(factor);
 }
+
+void MainWindow::toneCurve()
+{
+    ToneCurveDialog dialog;
+    dialog.insert(Channel::rgb, ui->histgramWidget->statisticsL());
+    dialog.insert(Channel::red, ui->histgramWidget->statisticsR());
+    dialog.insert(Channel::green, ui->histgramWidget->statisticsG());
+    dialog.insert(Channel::blue, ui->histgramWidget->statisticsB());
+
+    if (QDialog::Accepted == dialog.exec()) {
+        QMap<int, int> lutRGB = Utility::createLUT(dialog.points(Channel::rgb));
+        QMap<int, int> lutR = Utility::createLUT(dialog.points(Channel::red));
+        QMap<int, int> lutG = Utility::createLUT(dialog.points(Channel::green));
+        QMap<int, int> lutB = Utility::createLUT(dialog.points(Channel::blue));
+
+        QImage tmp = image.copy();
+        for (int y = 0; y < tmp.height(); y++) {
+            for (int x = 0; x < tmp.width(); x++) {
+                QColor c = tmp.pixelColor(x, y);
+                c.setRed(lutRGB.value(c.red(), c.red()));
+                c.setGreen(lutRGB.value(c.green(), c.green()));
+                c.setBlue(lutRGB.value(c.blue(), c.blue()));
+                tmp.setPixelColor(x, y, c);
+            }
+        }
+
+        QGraphicsPixmapItem *pixmapItem = new QGraphicsPixmapItem();
+        pixmapItem->setTransformationMode(Qt::SmoothTransformation);
+        pixmapItem->setPixmap(QPixmap::fromImage(tmp));
+
+        scene->clear();
+        scene->addItem(pixmapItem);
+
+        ui->histgramWidget->draw(tmp);
+    }
+}
+
+void MainWindow::preference()
+{
+    PreferenceDialog dialog;
+
+    if (QDialog::Accepted == dialog.exec()) {
+        //TODO
+    }
+}
+
