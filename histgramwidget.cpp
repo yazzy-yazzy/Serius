@@ -2,6 +2,7 @@
 #include "ui_histgramwidget.h"
 
 #include "utility.hpp"
+#include "channel.hpp"
 
 HistgramWidget::HistgramWidget(QWidget *parent) :
     QWidget(parent),
@@ -14,6 +15,8 @@ HistgramWidget::HistgramWidget(QWidget *parent) :
     ui->chartView->setChart(chart);
     ui->chartView->setRenderHint(QPainter::Antialiasing);
     ui->chartView->setContentsMargins(QMargins());
+
+    connect(ui->rgbCheckBox, &QCheckBox::toggled, this, &HistgramWidget::setRGBVisible);
 
     clear();
 }
@@ -64,12 +67,18 @@ void HistgramWidget::draw(const QImage &image)
     scan(image);
 
     drawLuminance();
-//    drawRGB();
-    drawText();
+    drawRGB();
+
+    setLuminanceVisible(true);
+    setRGBVisible(ui->rgbCheckBox->isChecked());
+
+    drawLuminanceText();
 }
 
 void HistgramWidget::scan(const QImage &image)
 {
+    Statistics statL, statR, statG, statB;
+
     for (int y = 0; y < image.height(); y++) {
         for (int x = 0; x < image.width(); x++) {
             QColor c = image.pixelColor(x, y);
@@ -85,6 +94,11 @@ void HistgramWidget::scan(const QImage &image)
     statR.update();
     statG.update();
     statB.update();
+
+    statMap.insert(Channel::luminance, statL);
+    statMap.insert(Channel::red, statR);
+    statMap.insert(Channel::green, statG);
+    statMap.insert(Channel::blue, statB);
 }
 
 void HistgramWidget::clear()
@@ -98,94 +112,184 @@ void HistgramWidget::clear()
     ui->editMedian->clear();
     ui->editPixels->clear();
 
-    statL.clear();
-    statR.clear();
-    statG.clear();
-    statB.clear();
+    statMap.clear();
+
+    seriesListL.clear();
+    seriesListRGB.clear();
 }
 
 void HistgramWidget::drawLuminance()
 {
+    Statistics statL = statMap.value(Channel::luminance);
     axisY->setRange(0, static_cast<qreal>(statL.histgramMax()));
 
-    QBarSet *bar = new QBarSet("Luminance");
-    bar->setColor(Qt::gray);
+    QLineSeries *seriesU = new QLineSeries();
+    QLineSeries *seriesL = new QLineSeries();
+    seriesU->setColor(Qt::gray);
+    seriesL->setColor(Qt::gray);
 
-    for (int i = 0; i < 256; i++)
-        bar->insert(i, statL.histgram(i));
+    for (int i = 0; i < 256; i++) {
+        seriesU->append(i, statL.histgram(i));
+        seriesL->append(i, 0);
+    }
 
-    QBarSeries *series = new QBarSeries();
-    series->setBarWidth(1);
-    series->append(bar);
+    QAreaSeries *seriesA = new QAreaSeries(seriesU, seriesL);
 
-    chart->addSeries(series);
-    series->attachAxis(axisX);
-    series->attachAxis(axisY);
+    QPen pen(Qt::gray);
+    pen.setWidth(1);
+    seriesA->setPen(pen);
+    seriesA->setBrush(QBrush(Qt::gray));
+
+    chart->addSeries(seriesL);
+    chart->addSeries(seriesU);
+    chart->addSeries(seriesA);
+    seriesL->attachAxis(axisX);
+    seriesL->attachAxis(axisY);
+    seriesU->attachAxis(axisX);
+    seriesU->attachAxis(axisY);
+    seriesA->attachAxis(axisX);
+    seriesA->attachAxis(axisY);
 
     axisX->setLabelsVisible(true);
     axisY->setLabelsVisible(true);
+
+    seriesListL.append(seriesL);
+    seriesListL.append(seriesU);
+    seriesListL.append(seriesA);
 }
 
 void HistgramWidget::drawRGB()
 {
+    Statistics statR = statMap.value(Channel::red);
+    Statistics statG = statMap.value(Channel::green);
+    Statistics statB = statMap.value(Channel::blue);
+
+    QLineSeries *seriesRU = new QLineSeries();
+    QLineSeries *seriesGU = new QLineSeries();
+    QLineSeries *seriesBU = new QLineSeries();
+//    QLineSeries *seriesRL = new QLineSeries();
+//    QLineSeries *seriesGL = new QLineSeries();
+//    QLineSeries *seriesBL = new QLineSeries();
+
+    for (int i = 0; i < 256; i++) {
+        seriesRU->append(i, statR.histgram(i));
+        seriesGU->append(i, statG.histgram(i));
+        seriesBU->append(i, statB.histgram(i));
+//        seriesRL->append(i, 0);
+//        seriesGL->append(i, 0);
+//        seriesBL->append(i, 0);
+    }
+
     QPen penR, penG, penB;
     penR.setColor(Qt::red);
     penG.setColor(Qt::green);
     penB.setColor(Qt::blue);
-    penR.setWidth(2);
-    penG.setWidth(2);
-    penB.setWidth(2);
+    penR.setWidth(1);
+    penG.setWidth(1);
+    penB.setWidth(1);
 
-    QSplineSeries *seriesR = new QSplineSeries();
-    QSplineSeries *seriesG = new QSplineSeries();
-    QSplineSeries *seriesB = new QSplineSeries();
+    seriesRU->setPen(penR);
+    seriesGU->setPen(penG);
+    seriesBU->setPen(penB);
 
-    seriesR->setPen(penR);
-    seriesG->setPen(penG);
-    seriesB->setPen(penB);
+//    QAreaSeries *seriesRA = new QAreaSeries(seriesRU, seriesRL);
+//    QAreaSeries *seriesGA = new QAreaSeries(seriesGU, seriesGL);
+//    QAreaSeries *seriesBA = new QAreaSeries(seriesBU, seriesBL);
 
-    for (int i = 0; i < 256; i++) {
-        seriesR->append(i, statR.histgram(i));
-        seriesG->append(i, statG.histgram(i));
-        seriesB->append(i, statB.histgram(i));
-    }
+//    seriesRA->setPen(penR);
+//    seriesGA->setPen(penG);
+//    seriesBA->setPen(penB);
 
-    chart->addSeries(seriesR);
-    chart->addSeries(seriesG);
-    chart->addSeries(seriesB);
+    chart->addSeries(seriesRU);
+    chart->addSeries(seriesGU);
+    chart->addSeries(seriesBU);
+//    chart->addSeries(seriesRL);
+//    chart->addSeries(seriesGL);
+//    chart->addSeries(seriesBL);
+//    chart->addSeries(seriesRA);
+//    chart->addSeries(seriesGA);
+//    chart->addSeries(seriesBA);
 
-    seriesR->attachAxis(axisX);
-    seriesR->attachAxis(axisY);
-    seriesG->attachAxis(axisX);
-    seriesG->attachAxis(axisY);
-    seriesB->attachAxis(axisX);
-    seriesB->attachAxis(axisY);
+    seriesRU->attachAxis(axisX);
+    seriesRU->attachAxis(axisY);
+    seriesGU->attachAxis(axisX);
+    seriesGU->attachAxis(axisY);
+    seriesBU->attachAxis(axisX);
+    seriesBU->attachAxis(axisY);
+//    seriesRL->attachAxis(axisX);
+//    seriesRL->attachAxis(axisY);
+//    seriesGL->attachAxis(axisX);
+//    seriesGL->attachAxis(axisY);
+//    seriesBL->attachAxis(axisX);
+//    seriesBL->attachAxis(axisY);
+//    seriesRA->attachAxis(axisX);
+//    seriesRA->attachAxis(axisY);
+//    seriesGA->attachAxis(axisX);
+//    seriesGA->attachAxis(axisY);
+//    seriesBA->attachAxis(axisX);
+//    seriesBA->attachAxis(axisY);
+
+    seriesListRGB.append(seriesRU);
+//    seriesListRGB.append(seriesRL);
+//    seriesListRGB.append(seriesRA);
+    seriesListRGB.append(seriesGU);
+//    seriesListRGB.append(seriesGL);
+//    seriesListRGB.append(seriesGA);
+    seriesListRGB.append(seriesBU);
+//    seriesListRGB.append(seriesBL);
+//    seriesListRGB.append(seriesBA);
 }
 
-void HistgramWidget::drawText()
+void HistgramWidget::drawLuminanceText()
 {
+    Statistics statL = statMap.value(Channel::luminance);
+
     ui->editMean->setText(QString("%1").arg(statL.mean(), 0, 'f', 2));
     ui->editStdDev->setText(QString("%1").arg(statL.stddev(), 0, 'f', 2));
     ui->editMedian->setText(QString("%1").arg(statL.median()));
     ui->editPixels->setText(QString("%L1").arg(statL.count()));
 }
 
-Statistics HistgramWidget::statisticsL() const
+void HistgramWidget::drawRGBText()
 {
-    return statL;
+    Statistics statL = statMap.value(Channel::luminance);
+    Statistics statR = statMap.value(Channel::red);
+    Statistics statG = statMap.value(Channel::green);
+    Statistics statB = statMap.value(Channel::blue);
+
+    ui->editMean->setText(QString("%1-%2-%3")
+                            .arg(statR.mean(), 0, 'f', 2)
+                            .arg(statG.mean(), 0, 'f', 2)
+                            .arg(statB.mean(), 0, 'f', 2));
+    ui->editStdDev->setText(QString("%1-%2-%3")
+                            .arg(statR.stddev(), 0, 'f', 2)
+                            .arg(statG.stddev(), 0, 'f', 2)
+                            .arg(statB.stddev(), 0, 'f', 2));
+    ui->editMedian->setText(QString("%1-%2-%3")
+                            .arg(statR.median(), 0, 'f', 2)
+                            .arg(statG.median(), 0, 'f', 2)
+                            .arg(statB.median(), 0, 'f', 2));
+    ui->editPixels->setText(QString("%L1").arg(statL.count()));
 }
 
-Statistics HistgramWidget::statisticsR() const
+Statistics HistgramWidget::statistics(Channel::Color channel) const
 {
-    return statR;
+    return statMap.value(channel);
 }
 
-Statistics HistgramWidget::statisticsG() const
+QMap<Channel::Color, Statistics> HistgramWidget::statistics() const
 {
-    return statG;
+    return statMap;
 }
 
-Statistics HistgramWidget::statisticsB() const
+void HistgramWidget::setLuminanceVisible(bool visible)
 {
-    return statB;
+    foreach (QAbstractSeries *series, seriesListL)
+        series->setVisible(visible);
+}
+
+void HistgramWidget::setRGBVisible(bool visible)
+{
+    foreach (QAbstractSeries *series, seriesListRGB)
+        series->setVisible(visible);
 }

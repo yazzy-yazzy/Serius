@@ -40,6 +40,7 @@ void TrackingSplineSeries::mousePressEvent(const QPointF &pos)
 {
     startPos = nearestPoint(pos, TOLERANCE_DELTA);
 
+    emit selectionChanged(pos);
     emit mousePressed(pos);
 }
 
@@ -51,6 +52,7 @@ void TrackingSplineSeries::mouseMoveEvent(const QPointF &pos)
         startPos = pos;
         currentPos = pos;
 
+        emit selectionChanged(pos);
         emit mouseMoved(pos);
     }
 }
@@ -71,6 +73,7 @@ void TrackingSplineSeries::mouseReleaseEvent(const QPointF &pos)
     clear();
     append(list);
 
+    emit selectionChanged(pos);
     emit mouseReleased(pos);
 }
 

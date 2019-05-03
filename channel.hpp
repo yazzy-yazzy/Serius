@@ -4,6 +4,7 @@
 #include <QMetaType>
 
 namespace Channel {
+
     enum Color {
         red = 0x1,
         green = 0x2,
@@ -14,6 +15,7 @@ namespace Channel {
         black = 0x80,
         rgb = red | green | blue,
         cmyk = cyan | magenta | yellow | black,
+        luminance,
     };
 }
 

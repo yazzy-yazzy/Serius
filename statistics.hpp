@@ -40,4 +40,6 @@ private:
     int _max;
 };
 
+QDebug operator<<(QDebug d, const Statistics &x);
+
 #endif // STATISTICS_HPP

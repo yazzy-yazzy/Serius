@@ -38,6 +38,8 @@ public slots:
 
 signals:
     void selectionChanged(const QPointF &point);
+    void pointAdded(int index);
+    void pointRemoved(int index);
 
 private:
     void createChart();
@@ -56,7 +58,9 @@ private:
 
     QSplineSeries *baselineSeries;
     TrackingSplineSeries *toneCurveSeries;
-    QBarSeries *histgramSeries;
+    QLineSeries *histgramSeriesU;
+    QLineSeries *histgramSeriesL;
+    QAreaSeries *histgramSeriesA;
 };
 
 #endif // TONECURVEWIDGET_HPP

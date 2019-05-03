@@ -14,9 +14,9 @@ protected:
     void showEvent(QShowEvent * event) override;
     void done(int r) override;
 
-private:
-    void readSettings();
-    void writeSettings();
+protected:
+    virtual void readSettings();
+    virtual void writeSettings();
 };
 
 #endif // MEMORIZEDIALOG_HPP

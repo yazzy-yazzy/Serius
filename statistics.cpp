@@ -31,7 +31,8 @@ Statistics &Statistics::operator=(const Statistics &x)
 
 void Statistics::clear()
 {
-    for (int i = 0; i < 256; i++) _histgram[i] = 0;
+    for (int i = 0; i < 256; i++)
+        _histgram[i] = 0;
     _mean = _median = _sum = _variance = 0.0;
     _count = 0;
 
@@ -121,4 +122,12 @@ int Statistics::histgramMax() const
 int Statistics::histgramMin() const
 {
     return *(std::min_element(std::begin(_histgram), std::end(_histgram)));
+}
+
+QDebug operator<<(QDebug d, const Statistics &x)
+{
+    QDebug nsp = d.nospace();
+    nsp << "count=" << x.count();
+    nsp << "¥n";
+    return d;
 }

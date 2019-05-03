@@ -76,6 +76,7 @@
     <property name="title">
      <string>Edit</string>
     </property>
+    <addaction name="actionBrightnessContrast"/>
     <addaction name="actionToneCurve"/>
    </widget>
    <addaction name="menuFile"/>
@@ -435,6 +436,20 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+,</string>
+   </property>
+  </action>
+  <action name="actionBrightnessContrast">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Brightness/Contrast...</string>
+   </property>
+   <property name="toolTip">
+    <string>Brightness/Contrast</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
    </property>
   </action>
  </widget>

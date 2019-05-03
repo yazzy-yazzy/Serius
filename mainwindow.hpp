@@ -2,8 +2,11 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <QMap>
+#include "channel.hpp"
 
 QT_FORWARD_DECLARE_CLASS(QGraphicsScene);
+QT_FORWARD_DECLARE_CLASS(QGraphicsPixmapItem);
 QT_FORWARD_DECLARE_CLASS(QLabel);
 
 namespace Ui {
@@ -29,6 +32,7 @@ private slots:
     void zoomOut();
     void zoomMag();
     void fitToWindow();
+    void brightnessContrast();
     void toneCurve();
     void preference();
 
@@ -47,10 +51,13 @@ private:
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
+    QGraphicsPixmapItem *pixmapItem;
     QImage image;
     QRectF recentSceneRect;
     QLabel *statusLLabel;
     QLabel *statusRLabel;
+
+    QMap<Channel::Color, QList<QPointF>> toneCurves;
 };
 
 #endif // MAINWINDOW_HPP

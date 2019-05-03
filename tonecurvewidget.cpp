@@ -74,7 +74,7 @@ void ToneCurveWidget::createChart()
     axisHistgramY->setLabelsVisible(false);
 
     chart = new QChart();
-    chart->setAnimationOptions(QChart::AllAnimations);  //TBD
+//    chart->setAnimationOptions(QChart::AllAnimations);  //TBD
     chart->addAxis(axisToneCurveX, Qt::AlignBottom);
     chart->addAxis(axisToneCurveY, Qt::AlignLeft);
     chart->addAxis(axisHistgramX, Qt::AlignBottom);
@@ -120,20 +120,33 @@ void ToneCurveWidget::createToneCurve()
     toneCurveSeries->attachAxis(axisToneCurveY);
 
     connect(toneCurveSeries, SIGNAL(selectionChanged(QPointF)), this, SIGNAL(selectionChanged(QPointF)));
+    connect(toneCurveSeries, SIGNAL(pointAdded(int)), this, SIGNAL(pointAdded(int)));
+    connect(toneCurveSeries, SIGNAL(pointRemoved(int)), this, SIGNAL(pointRemoved(int)));
 }
 
 void ToneCurveWidget::createHistgram()
 {
-    QBarSet *bar = new QBarSet("Histgram");
-    bar->setColor(Qt::darkGray);
+    histgramSeriesU = new QLineSeries();
+    histgramSeriesL = new QLineSeries();
+    histgramSeriesU->setColor(Qt::darkGray);
+    histgramSeriesL->setColor(Qt::darkGray);
 
-    histgramSeries = new QBarSeries();
-    histgramSeries->setBarWidth(1);
-    histgramSeries->append(bar);
+    QPen pen(Qt::darkGray);
+    pen.setWidth(1);
 
-    chart->addSeries(histgramSeries);
-    histgramSeries->attachAxis(axisHistgramX);
-    histgramSeries->attachAxis(axisHistgramY);
+    histgramSeriesA = new QAreaSeries(histgramSeriesU, histgramSeriesL);
+    histgramSeriesA->setPen(pen);
+    histgramSeriesA->setColor(Qt::darkGray);
+
+    chart->addSeries(histgramSeriesU);
+    chart->addSeries(histgramSeriesL);
+    chart->addSeries(histgramSeriesA);
+    histgramSeriesU->attachAxis(axisHistgramX);
+    histgramSeriesU->attachAxis(axisHistgramY);
+    histgramSeriesL->attachAxis(axisHistgramX);
+    histgramSeriesL->attachAxis(axisHistgramY);
+    histgramSeriesA->attachAxis(axisHistgramX);
+    histgramSeriesA->attachAxis(axisHistgramY);
 }
 
 void ToneCurveWidget::setBaselineVisible(bool visible)
@@ -143,7 +156,9 @@ void ToneCurveWidget::setBaselineVisible(bool visible)
 
 void ToneCurveWidget::setHistgramVisible(bool visible)
 {
-    histgramSeries->setVisible(visible);
+    histgramSeriesU->setVisible(visible);
+    histgramSeriesL->setVisible(visible);
+    histgramSeriesA->setVisible(visible);
 }
 
 void ToneCurveWidget::removeCurrentPoint()
@@ -188,22 +203,27 @@ QColor ToneCurveWidget::toneCurveColor() const
 
 void ToneCurveWidget::setHistgramColor(QColor color)
 {
-    foreach (QBarSet *bar, histgramSeries->barSets())
-        bar->setColor(color);
+    histgramSeriesU->setColor(color);
+    histgramSeriesL->setColor(color);
+    histgramSeriesA->setColor(color);
 }
 
 QColor ToneCurveWidget::histgramColor() const
 {
-    return histgramSeries->barSets().first()->color();
+    return histgramSeriesA->color();
 }
 
 void ToneCurveWidget::setHistgram(const Statistics &statistics)
 {
     axisHistgramY->setRange(0, static_cast<qreal>(statistics.histgramMax()));
 
-    QBarSet *bar = histgramSeries->barSets().first();
-    for (int i = 0; i < 256; i++)
-        bar->insert(i, statistics.histgram(i));
+    histgramSeriesU->clear();
+    histgramSeriesL->clear();
+
+    for (int i = 0; i < 256; i++) {
+        histgramSeriesU->append(i, statistics.histgram(i));
+        histgramSeriesL->append(i, 0);
+    }
 }
 
 void ToneCurveWidget::setPoints(const QList<QPointF> &points)

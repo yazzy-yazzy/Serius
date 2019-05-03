@@ -42,7 +42,9 @@ SOURCES += \
     trackingchartview.cpp \
     trackingchartevent.cpp \
     preferencedialog.cpp \
-    utility.cpp
+    utility.cpp \
+    trackinggraphicspixmapitem.cpp \
+    brightnesscontrastdialog.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -63,7 +65,9 @@ HEADERS += \
     trackingchartevent.hpp \
     preferencedialog.hpp \
     singleton.hpp \
-    channel.hpp
+    channel.hpp \
+    trackinggraphicspixmapitem.hpp \
+    brightnesscontrastdialog.hpp
 
 FORMS += \
     mainwindow.ui \
@@ -72,7 +76,8 @@ FORMS += \
     channelwidget.ui \
     tonecurvedialog.ui \
     tonecurvewidget.ui \
-    preferencedialog.ui
+    preferencedialog.ui \
+    brightnesscontrastdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

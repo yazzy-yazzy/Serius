@@ -75,6 +75,7 @@ QMap<int, int> Utility::createLUT(const QList<QPointF> &points)
             nearesetIndex = n;
         }
 
+        nearesetIndex = qBound(0, nearesetIndex, sdpoints.size() - 1);
         int value = qBound(0, static_cast<int>(sdpoints.at(nearesetIndex).y()), 255);
 
         lut.insert(i, value);
@@ -105,4 +106,105 @@ int Utility::findMedian(int histgram[], int totalCount)
             return i;
     }
     return 0;
+}
+
+QImage Utility::contrast(QImage &source, int factor)
+{
+    if (factor == 0)
+        return source;
+
+    const qreal contrast = (100.0 + factor) / 100.0;
+
+    for (int y = 0; y < source.height(); y++) {
+        for (int x = 0; x < source.width(); x++) {
+            QColor c = source.pixelColor(x, y);
+            c.setRedF(qBound(0.0, 0.5 + contrast * (c.redF() - 0.5), 1.0));
+            c.setGreenF(qBound(0.0, 0.5 + contrast * (c.greenF() - 0.5), 1.0));
+            c.setBlueF(qBound(0.0, 0.5 + contrast * (c.blueF() - 0.5), 1.0));
+            source.setPixelColor(x, y, c);
+        }
+    }
+
+    return source;
+}
+
+QImage Utility::brightness(QImage &source, int factor)
+{
+    if (factor == 0)
+        return source;
+
+    const qreal brightness = (100.0 + factor) / 100.0;
+
+    for (int y = 0; y < source.height(); y++) {
+        for (int x = 0; x < source.width(); x++) {
+            QColor c = source.pixelColor(x, y);
+            c.setRedF(qBound(0.0, c.redF() * brightness, 1.0));
+            c.setGreenF(qBound(0.0, c.greenF() * brightness, 1.0));
+            c.setBlueF(qBound(0.0, c.blueF() * brightness, 1.0));
+            source.setPixelColor(x, y, c);
+        }
+    }
+
+    return source;
+}
+
+QImage Utility::convert(QImage &source, const QMap<int, int> &lut)
+{
+    if (lut.isEmpty())
+        return source;
+
+    for (int y = 0; y < source.height(); y++) {
+        for (int x = 0; x < source.width(); x++) {
+            QColor c = source.pixelColor(x, y);
+            c.setRed(lut.value(c.red(), c.red()));
+            c.setGreen(lut.value(c.green(), c.green()));
+            c.setBlue(lut.value(c.blue(), c.blue()));
+            source.setPixelColor(x, y, c);
+        }
+    }
+
+    return source;
+}
+
+QImage Utility::convert(QImage &source, const QMap<int, int> &lutR, const QMap<int, int> &lutG, const QMap<int, int> &lutB)
+{
+    if (lutR.isEmpty() && lutG.isEmpty() && lutB.isEmpty())
+        return source;
+
+    for (int y = 0; y < source.height(); y++) {
+        for (int x = 0; x < source.width(); x++) {
+            QColor c = source.pixelColor(x, y);
+            c.setRed(lutR.value(c.red(), c.red()));
+            c.setGreen(lutG.value(c.green(), c.green()));
+            c.setBlue(lutB.value(c.blue(), c.blue()));
+            source.setPixelColor(x, y, c);
+        }
+    }
+
+    return source;
+}
+
+QImage Utility::erase(QImage &source, const QList<Channel::Color> &channel)
+{
+    if (channel.isEmpty())
+        return source;
+
+    const bool eraseR = channel.contains(Channel::red);
+    const bool eraseG = channel.contains(Channel::green);
+    const bool eraseB = channel.contains(Channel::blue);
+
+    for (int y = 0; y < source.height(); y++) {
+        for (int x = 0; x < source.width(); x++) {
+            QColor c = source.pixelColor(x, y);
+            if (eraseR)
+                c.setRed(0);
+            if (eraseG)
+                c.setGreen(0);
+            if (eraseB)
+                c.setBlue(0);
+            source.setPixelColor(x, y, c);
+        }
+    }
+
+    return source;
 }

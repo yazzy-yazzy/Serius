@@ -5,6 +5,9 @@
 #include <QList>
 #include <QColor>
 #include <QtMath>
+#include <QImage>
+
+#include "channel.hpp"
 
 namespace Utility
 {
@@ -15,6 +18,12 @@ namespace Utility
 
     int calcLuminanceFromRGB(const QColor &c);
     int findMedian(int histgram[], int totalCount);
+
+    QImage contrast(QImage &source, int factor);
+    QImage brightness(QImage &source, int factor);
+    QImage convert(QImage &source, const QMap<int, int> &lut);
+    QImage convert(QImage &source, const QMap<int, int> &lutR, const QMap<int, int> &lutG, const QMap<int, int> &lutB);
+    QImage erase(QImage &source, const QList<Channel::Color> &channel);
 }
 
 #endif // UTILITY_HPP
