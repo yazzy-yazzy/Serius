@@ -7,6 +7,8 @@ BrightnessContrastDialog::BrightnessContrastDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    connect(ui->resetButton, &QPushButton::clicked, this, &BrightnessContrastDialog::clear);
+
     clear();
 }
 

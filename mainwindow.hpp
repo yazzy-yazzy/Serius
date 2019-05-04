@@ -6,7 +6,7 @@
 #include "channel.hpp"
 
 QT_FORWARD_DECLARE_CLASS(QGraphicsScene);
-QT_FORWARD_DECLARE_CLASS(QGraphicsPixmapItem);
+QT_FORWARD_DECLARE_CLASS(AdjustableGraphicsPixmapItem);
 QT_FORWARD_DECLARE_CLASS(QLabel);
 
 namespace Ui {
@@ -40,6 +40,7 @@ private slots:
     void updateAction();
     void updateROI(const QRectF &sceneRect);
     void updateChannel(int state);
+    void updatePreview(const QMap<Channel::Color, QList<QPointF>> &map);
     void enter(const QPointF &scenePos);
     void leave();
     void updateDock();
@@ -51,13 +52,11 @@ private:
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
-    QGraphicsPixmapItem *pixmapItem;
+    AdjustableGraphicsPixmapItem *pixmapItem;
     QImage image;
     QRectF recentSceneRect;
     QLabel *statusLLabel;
     QLabel *statusRLabel;
-
-    QMap<Channel::Color, QList<QPointF>> toneCurves;
 };
 
 #endif // MAINWINDOW_HPP

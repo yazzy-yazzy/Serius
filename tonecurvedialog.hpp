@@ -7,7 +7,6 @@
 #include "statistics.hpp"
 #include "channel.hpp"
 
-QT_FORWARD_DECLARE_CLASS(QGraphicsPixmapItem);
 QT_FORWARD_DECLARE_CLASS(QShortcut);
 
 namespace Ui {
@@ -23,28 +22,27 @@ public:
     ~ToneCurveDialog() override;
 
     void setToneCurve(Channel::Color channel, const QList<QPointF> &points);
-    void setToneCurve(const QMap<Channel::Color, QList<QPointF>> &map);
+    void setToneCurves(const QMap<Channel::Color, QList<QPointF>> &map);
     void setHistgram(Channel::Color channel, const Statistics &stat);
-    void setHistgram(const QMap<Channel::Color, Statistics> &map);
-    void setPreview(QImage *image, QGraphicsPixmapItem *pixmapItem);
+    void setHistgrams(const QMap<Channel::Color, Statistics> &map);
     void setVisible(bool visible) override;
 
     QList<QPointF> points(Channel::Color) const;
     QMap<Channel::Color, QList<QPointF>> points() const;
 
 public slots:
-    void accept() override;
     void clear();
 
+signals:
+    void curveChanged(const QMap<Channel::Color, QList<QPointF>> &map);
+
 private slots:
-    void updatePoint(const QPointF &point);
+    void updateSelectPoint(const QPointF &point);
     void updateChannel(int index);
-    void updatePreview();
+    void updateCurvePoints();
 
 private:
     void createAction();
-    void psave();
-    void prestore();
 
 protected:
     void readSettings() override;
@@ -52,8 +50,6 @@ protected:
 
 private:
     Ui::ToneCurveDialog *ui;
-    QGraphicsPixmapItem *previewItem;
-    QImage *previewImage;
 
     QShortcut *deleteShortcut;
     QMap<Channel::Color, Statistics> statMap;

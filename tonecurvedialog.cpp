@@ -1,15 +1,9 @@
 #include "tonecurvedialog.hpp"
 #include "ui_tonecurvedialog.h"
 
-#include "utility.hpp"
-
-const char *PROP_KEY = "PreviousChannelIndex";
-
 ToneCurveDialog::ToneCurveDialog(QWidget *parent) :
     MemorizeDialog(parent),
-    ui(new Ui::ToneCurveDialog),
-    previewImage(nullptr),
-    previewItem(nullptr)
+    ui(new Ui::ToneCurveDialog)
 {
     ui->setupUi(this);
 
@@ -27,11 +21,13 @@ ToneCurveDialog::ToneCurveDialog(QWidget *parent) :
 
     connect(ui->baselineCheckBox, &QCheckBox::toggled, ui->widget, &ToneCurveWidget::setBaselineVisible);
     connect(ui->histgramCheckBox, &QCheckBox::toggled, ui->widget, &ToneCurveWidget::setHistgramVisible);
-    connect(ui->widget, &ToneCurveWidget::selectionChanged, this, &ToneCurveDialog::updatePoint);
-    connect(ui->widget, &ToneCurveWidget::pointAdded, this, &ToneCurveDialog::updatePreview);
-    connect(ui->widget, &ToneCurveWidget::pointRemoved, this, &ToneCurveDialog::updatePreview);
+    connect(ui->widget, &ToneCurveWidget::selectionChanged, this, &ToneCurveDialog::updateSelectPoint);
     connect(ui->channelComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateChannel(int)));
     connect(ui->resetButton, &QPushButton::clicked, this, &ToneCurveDialog::clear);
+
+    connect(ui->widget, &ToneCurveWidget::pointAdded, this, &ToneCurveDialog::updateCurvePoints);
+    connect(ui->widget, &ToneCurveWidget::pointRemoved, this, &ToneCurveDialog::updateCurvePoints);
+    connect(ui->resetButton, &QPushButton::clicked, this, &ToneCurveDialog::updateCurvePoints);
 }
 
 ToneCurveDialog::~ToneCurveDialog()
@@ -43,7 +39,6 @@ void ToneCurveDialog::clear()
 {
     ui->widget->clear();
     pointsMap.clear();
-    updatePreview();
 }
 
 void ToneCurveDialog::createAction()
@@ -54,7 +49,7 @@ void ToneCurveDialog::createAction()
     connect(deleteShortcut, &QShortcut::activated, ui->widget, &ToneCurveWidget::removeCurrentPoint);
 }
 
-void ToneCurveDialog::updatePoint(const QPointF &point)
+void ToneCurveDialog::updateSelectPoint(const QPointF &point)
 {
     if (point.isNull()) {
         ui->inputEdit->clear();
@@ -65,33 +60,12 @@ void ToneCurveDialog::updatePoint(const QPointF &point)
     }
 }
 
-void ToneCurveDialog::psave()
-{
-    bool success = false;
-    int previousIndex = property(PROP_KEY).toInt(&success);
-    if (success) {
-        Channel::Color channel = ui->channelComboBox->itemData(previousIndex).value<Channel::Color>();
-        pointsMap.insert(channel, ui->widget->points());
-    }
-}
-
-void ToneCurveDialog::prestore()
-{
-    Channel::Color channel = ui->channelComboBox->currentData().value<Channel::Color>();
-    ui->widget->setPoints(pointsMap.value(channel, QList<QPointF>()));
-
-    setProperty(PROP_KEY, ui->channelComboBox->currentIndex());
-}
-
 void ToneCurveDialog::updateChannel(int index)
 {
-    psave();
-
     Channel::Color channel = ui->channelComboBox->itemData(index).value<Channel::Color>();
     ui->widget->setToneCurveColor(colorMap.value(channel, QColor(Qt::gray)));
     ui->widget->setHistgram(statMap.value(channel, Statistics()));
-
-    prestore();
+    ui->widget->setPoints(pointsMap.value(channel, QList<QPointF>()));
 }
 
 void ToneCurveDialog::setHistgram(Channel::Color channel, const Statistics &stat)
@@ -99,7 +73,7 @@ void ToneCurveDialog::setHistgram(Channel::Color channel, const Statistics &stat
     statMap.insert(channel, stat);
 }
 
-void ToneCurveDialog::setHistgram(const QMap<Channel::Color, Statistics> &map)
+void ToneCurveDialog::setHistgrams(const QMap<Channel::Color, Statistics> &map)
 {
     statMap = map;
 }
@@ -109,7 +83,7 @@ void ToneCurveDialog::setToneCurve(Channel::Color channel, const QList<QPointF> 
     pointsMap.insert(channel, points);
 }
 
-void ToneCurveDialog::setToneCurve(const QMap<Channel::Color, QList<QPointF>> &map)
+void ToneCurveDialog::setToneCurves(const QMap<Channel::Color, QList<QPointF>> &map)
 {
     pointsMap = map;
 }
@@ -130,61 +104,6 @@ QList<QPointF> ToneCurveDialog::points(Channel::Color color) const
 QMap<Channel::Color, QList<QPointF>> ToneCurveDialog::points() const
 {
     return pointsMap;
-}
-
-void ToneCurveDialog::accept()
-{
-    psave();
-
-    QDialog::accept();
-}
-
-void ToneCurveDialog::setPreview(QImage *image, QGraphicsPixmapItem *pixmapItem)
-{
-    previewImage = image;
-    previewItem = pixmapItem;
-}
-
-void ToneCurveDialog::updatePreview()
-{
-    if (!previewImage || !previewItem)
-        return;
-
-    if (!ui->previewCheckBox->isChecked())
-        return;
-
-    Channel::Color channel = ui->channelComboBox->currentData().value<Channel::Color>();
-    QList<QPointF> pointsL = pointsMap.value(Channel::luminance);
-    QList<QPointF> pointsR = pointsMap.value(Channel::red);
-    QList<QPointF> pointsG = pointsMap.value(Channel::green);
-    QList<QPointF> pointsB = pointsMap.value(Channel::blue);
-
-    if (channel == Channel::luminance)
-        pointsL = ui->widget->points();
-    else if (channel == Channel::red)
-        pointsR = ui->widget->points();
-    else if (channel == Channel::green)
-        pointsG = ui->widget->points();
-    else if (channel == Channel::blue)
-        pointsB = ui->widget->points();
-
-    QMap<int, int> lutL = Utility::createLUT(pointsL);
-    QMap<int, int> lutR = Utility::createLUT(pointsR);
-    QMap<int, int> lutG = Utility::createLUT(pointsG);
-    QMap<int, int> lutB = Utility::createLUT(pointsB);
-
-    if (lutR.isEmpty() && lutG.isEmpty() && lutB.isEmpty() && lutL.isEmpty()) {
-        previewItem->setPixmap(QPixmap::fromImage(*previewImage));
-        return;
-    }
-
-    QImage tmp = previewImage->copy();
-    if (lutR.isEmpty() && lutG.isEmpty() && lutB.isEmpty())
-        Utility::convert(tmp, lutL);
-    else
-        Utility::convert(tmp, lutR, lutG, lutB);
-
-    previewItem->setPixmap(QPixmap::fromImage(tmp));
 }
 
 void ToneCurveDialog::readSettings()
@@ -212,4 +131,13 @@ void ToneCurveDialog::writeSettings()
     settings.setValue(tr("%1/recent/channel").arg(objectName()), ui->channelComboBox->currentIndex());
 
     MemorizeDialog::writeSettings();
+}
+
+void ToneCurveDialog::updateCurvePoints()
+{
+    Channel::Color channel = ui->channelComboBox->currentData().value<Channel::Color>();
+    pointsMap.insert(channel, ui->widget->points());
+
+//    if (ui->previewCheckBox->isChecked())
+//        emit curveChanged(pointsMap);
 }

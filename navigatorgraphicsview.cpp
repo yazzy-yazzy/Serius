@@ -6,11 +6,11 @@
 NavigatorGraphicsView::NavigatorGraphicsView(QWidget *parent) : QGraphicsView(parent), nowDrag(false)
 {
     setMouseTracking(true);
-    setRubberBandSelectionMode(Qt::IntersectsItemShape);
+    setRubberBandSelectionMode(Qt::IntersectsItemBoundingRect);
     setDragMode(QGraphicsView::RubberBandDrag);
 
     QPalette palette;
-    palette.setColor(QPalette::Active, QPalette::Highlight,Qt::red);
+    palette.setColor(QPalette::Active, QPalette::Highlight, Qt::red);
 
     rubberBand = new NavigatorRubberBand(QRubberBand::Line, this);
     rubberBand->setPalette(palette);    //it doesn't work under Mac...

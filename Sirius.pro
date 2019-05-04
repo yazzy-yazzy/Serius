@@ -43,8 +43,8 @@ SOURCES += \
     trackingchartevent.cpp \
     preferencedialog.cpp \
     utility.cpp \
-    trackinggraphicspixmapitem.cpp \
-    brightnesscontrastdialog.cpp
+    brightnesscontrastdialog.cpp \
+    adjustablegraphicspixmapitem.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -66,8 +66,8 @@ HEADERS += \
     preferencedialog.hpp \
     singleton.hpp \
     channel.hpp \
-    trackinggraphicspixmapitem.hpp \
-    brightnesscontrastdialog.hpp
+    brightnesscontrastdialog.hpp \
+    adjustablegraphicspixmapitem.hpp
 
 FORMS += \
     mainwindow.ui \

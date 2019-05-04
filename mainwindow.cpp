@@ -6,7 +6,7 @@
 #include "preferencedialog.hpp"
 #include "tonecurvedialog.hpp"
 #include "brightnesscontrastdialog.hpp"
-#include "utility.hpp"
+#include "adjustablegraphicspixmapitem.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,9 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    pixmapItem = new QGraphicsPixmapItem();
+    pixmapItem = new AdjustableGraphicsPixmapItem();
     pixmapItem->setTransformationMode(Qt::SmoothTransformation);
-    pixmapItem->setPixmap(QPixmap::fromImage(image));
 
     scene = new QGraphicsScene(this);
     scene->addItem(pixmapItem);
@@ -83,17 +82,12 @@ void MainWindow::updateROI(const QRectF &sceneRect)
 
 void MainWindow::updateChannel(int state)
 {
-    QList<Channel::Color> eraseChannels;
-    if (!ui->channelwidget->contains(state, Channel::red))
-        eraseChannels.append(Channel::red);
-    if (!ui->channelwidget->contains(state, Channel::green))
-        eraseChannels.append(Channel::green);
-    if (!ui->channelwidget->contains(state, Channel::blue))
-        eraseChannels.append(Channel::blue);
-
-    QImage tmp = image.copy();
-
-    pixmapItem->setPixmap(QPixmap::fromImage(Utility::erase(tmp, eraseChannels)));
+    QMap<Channel::Color, bool> map;
+    map.insert(Channel::red, ui->channelwidget->contains(state, Channel::red));
+    map.insert(Channel::green, ui->channelwidget->contains(state, Channel::green));
+    map.insert(Channel::blue, ui->channelwidget->contains(state, Channel::blue));
+    pixmapItem->setChannelVisible(map);
+    pixmapItem->redraw();
 }
 
 void MainWindow::enter(const QPointF &scenePos)
@@ -205,7 +199,11 @@ void MainWindow::open()
         QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
         settings.setValue("FileDialog/RecentOpenDir", QFileInfo(selectedFile).dir().path());
 
-        pixmapItem->setPixmap(QPixmap::fromImage(image));
+        pixmapItem->clear();
+        pixmapItem->setImage(&image);
+        pixmapItem->redraw();
+        pixmapItem->setVisible(true);
+
         scene->setSceneRect(0, 0, image.width(), image.height());
 
         qreal factorX = static_cast<qreal>(ui->navigatorWidget->view()->width() - 10) / static_cast<qreal>(image.width());
@@ -213,8 +211,6 @@ void MainWindow::open()
         qreal factor = qMin(factorX, factorY);
         ui->navigatorWidget->view()->resetMatrix();
         ui->navigatorWidget->view()->scale(factor, factor);
-
-        toneCurves.clear();
 
         setWindowFilePath(selectedFile);
         setWindowTitle(QFileInfo(selectedFile).fileName());
@@ -304,45 +300,38 @@ void MainWindow::fitToWindow()
 void MainWindow::brightnessContrast()
 {
     BrightnessContrastDialog dialog;
+    dialog.setBrightness(pixmapItem->brightness());
+    dialog.setContrast(pixmapItem->contrast());
 
     if (QDialog::Accepted == dialog.exec()) {
-        QImage tmp = image.copy();
-        Utility::brightness(tmp, dialog.brightness());
-        Utility::contrast(tmp, dialog.contrast());
-        pixmapItem->setPixmap(QPixmap::fromImage(tmp));
-        ui->histgramWidget->draw(tmp);
+        pixmapItem->setBrightness(dialog.brightness());
+        pixmapItem->setContrast(dialog.contrast());
+        pixmapItem->redraw();
+
+        ui->histgramWidget->draw(pixmapItem->pixmap().toImage());
     }
 }
 
 void MainWindow::toneCurve()
 {
     ToneCurveDialog dialog;
-    dialog.setPreview(&image, pixmapItem);
-    dialog.setToneCurve(toneCurves);
-    dialog.setHistgram(ui->histgramWidget->statistics());
+    dialog.setToneCurves(pixmapItem->toneCurves());
+    dialog.setHistgrams(ui->histgramWidget->statistics());
 
-    if (QDialog::Accepted == dialog.exec())
-        toneCurves = dialog.points();
+    connect(&dialog, &ToneCurveDialog::curveChanged, this, &MainWindow::updatePreview, Qt::QueuedConnection);
 
-    QMap<int, int> lutL = Utility::createLUT(toneCurves.value(Channel::luminance));
-    QMap<int, int> lutR = Utility::createLUT(toneCurves.value(Channel::red));
-    QMap<int, int> lutG = Utility::createLUT(toneCurves.value(Channel::green));
-    QMap<int, int> lutB = Utility::createLUT(toneCurves.value(Channel::blue));
+    if (QDialog::Accepted == dialog.exec()) {
+        pixmapItem->setToneCurves(dialog.points());
+        pixmapItem->redraw();
 
-    if (lutR.isEmpty() && lutG.isEmpty() && lutB.isEmpty() && lutL.isEmpty()) {
-        pixmapItem->setPixmap(QPixmap::fromImage(image));
-        ui->histgramWidget->draw(image);
-        return;
+        ui->histgramWidget->draw(pixmapItem->pixmap().toImage());
     }
+}
 
-    QImage tmp = image.copy();
-    if (lutR.isEmpty() && lutG.isEmpty() && lutB.isEmpty())
-        Utility::convert(tmp, lutL);
-    else
-        Utility::convert(tmp, lutR, lutG, lutB);
-
-    pixmapItem->setPixmap(QPixmap::fromImage(tmp));
-    ui->histgramWidget->draw(tmp);
+void MainWindow::updatePreview(const QMap<Channel::Color, QList<QPointF>> &map)
+{
+    pixmapItem->setToneCurves(map);
+    pixmapItem->redraw();
 }
 
 void MainWindow::preference()
