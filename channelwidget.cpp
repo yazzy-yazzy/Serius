@@ -79,3 +79,4 @@ void ChannelWidget::selectAll()
     g->setChecked(true);
     b->setChecked(true);
 }
+

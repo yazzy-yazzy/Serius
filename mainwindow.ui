@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string notr="true">MainWindow</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resource.qrc">
@@ -330,7 +330,7 @@
      <normaloff>:/images/zoom-fit</normaloff>:/images/zoom-fit</iconset>
    </property>
    <property name="text">
-    <string>Fit to Wondow</string>
+    <string>Fit to Window</string>
    </property>
    <property name="toolTip">
     <string>Fit to window</string>

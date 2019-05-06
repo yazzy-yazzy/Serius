@@ -15,11 +15,11 @@ public:
     explicit PreferenceDialog(QWidget *parent = nullptr);
     ~PreferenceDialog();
 
-private slots:
-    void updateStyle(int index);
+    QString style() const;
+    void setStyle(const QString &key);
 
-private:
-    QString currentStyleKey() const;
+    QString language() const;
+    void setLanguage(const QString &lang);
 
 private:
     Ui::PreferenceDialog *ui;

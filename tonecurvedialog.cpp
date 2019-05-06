@@ -141,3 +141,4 @@ void ToneCurveDialog::updateCurvePoints()
 //    if (ui->previewCheckBox->isChecked())
 //        emit curveChanged(pointsMap);
 }
+

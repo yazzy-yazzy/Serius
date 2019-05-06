@@ -13,4 +13,8 @@
         <file alias="language">assets/image/applications-education-language.png</file>
         <file alias="system">assets/image/applications-system.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>assets/translate/language_en.qm</file>
+        <file>assets/translate/language_ja.qm</file>
+    </qresource>
 </RCC>

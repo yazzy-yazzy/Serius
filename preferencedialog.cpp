@@ -10,9 +10,18 @@ PreferenceDialog::PreferenceDialog(QWidget *parent) :
     ui->setupUi(this);
 
     ui->styleComboBox->addItems(QStyleFactory::keys());
-    ui->styleComboBox->setCurrentText(currentStyleKey());
 
-    connect(ui->styleComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(updateStyle(int)));
+    ui->languageComboBox->addItem(tr("en"), "en");
+    ui->languageComboBox->addItem(tr("ja"), "ja");
+
+    connect(ui->styleComboBox, QOverload<int>::of(&QComboBox::activated), [=](int index) {
+        Q_UNUSED(index);
+        QMessageBox::information(this, tr("Restart Required"), tr("The style change will take effect after restart."));
+    });
+    connect(ui->languageComboBox, QOverload<int>::of(&QComboBox::activated), [=](int index) {
+        Q_UNUSED(index);
+        QMessageBox::information(this, tr("Restart Required"), tr("The language change will take effect after restart."));
+    });
 }
 
 PreferenceDialog::~PreferenceDialog()
@@ -20,21 +29,22 @@ PreferenceDialog::~PreferenceDialog()
     delete ui;
 }
 
-void PreferenceDialog::updateStyle(int index)
+QString PreferenceDialog::style() const
 {
-    QStyle *style = QStyleFactory::create(ui->styleComboBox->itemText(index));
-
-    qApp->setPalette(style->standardPalette());
-    qApp->setStyleSheet("");
-    qApp->setStyle(style);
+    return ui->styleComboBox->currentText();
 }
 
-QString PreferenceDialog::currentStyleKey() const
+void PreferenceDialog::setStyle(const QString &key)
 {
-    foreach (QString key, QStyleFactory::keys()) {
-        QStyle *style = QStyleFactory::create(key);
-        if (style->objectName() == QApplication::style()->objectName())
-            return key;
-    }
-    return QString("");
+    ui->styleComboBox->setCurrentText(key);
+}
+
+QString PreferenceDialog::language() const
+{
+    return ui->languageComboBox->currentData().toString();
+}
+
+void PreferenceDialog::setLanguage(const QString &lang)
+{
+    ui->languageComboBox->setCurrentIndex(ui->languageComboBox->findData(lang));
 }

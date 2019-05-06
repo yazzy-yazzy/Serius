@@ -336,10 +336,16 @@ void MainWindow::updatePreview(const QMap<Channel::Color, QList<QPointF>> &map)
 
 void MainWindow::preference()
 {
+    QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
+    const QString language = settings.value("Application/translator", "ja").toString();
+    const QString style = settings.value("Application/style").toString();
+
     PreferenceDialog dialog;
+    dialog.setStyle(style);
+    dialog.setLanguage(language);
 
     if (QDialog::Accepted == dialog.exec()) {
-        //TODO
+        settings.setValue("Application/translator", dialog.language());
+        settings.setValue("Application/style", dialog.style());
     }
 }
-

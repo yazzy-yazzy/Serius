@@ -1,6 +1,8 @@
 #include "brightnesscontrastdialog.hpp"
 #include "ui_brightnesscontrastdialog.h"
 
+#include <QtWidgets>
+
 BrightnessContrastDialog::BrightnessContrastDialog(QWidget *parent) :
     MemorizeDialog(parent),
     ui(new Ui::BrightnessContrastDialog)
@@ -42,3 +44,4 @@ void BrightnessContrastDialog::setContrast(int value)
 {
     ui->contrastSlider->setValue(value);
 }
+

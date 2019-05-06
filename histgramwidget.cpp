@@ -293,3 +293,4 @@ void HistgramWidget::setRGBVisible(bool visible)
     foreach (QAbstractSeries *series, seriesListRGB)
         series->setVisible(visible);
 }
+
