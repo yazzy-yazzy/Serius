@@ -84,8 +84,9 @@ void AdjustableGraphicsPixmapItem::redraw()
 
     QPixmap pixmap = QPixmap::fromImage(tmp);
     QGraphicsPixmapItem::setPixmap(pixmap);
-
     emit pixmapChanged(pixmap);
+
+    setStatistics(scan(tmp));
 }
 
 int AdjustableGraphicsPixmapItem::brightness() const
@@ -122,4 +123,50 @@ void AdjustableGraphicsPixmapItem::setToneCurves(const QMap<Channel::Color, QLis
 {
     _curveMap = map;
 }
+
+QMap<Channel::Color, Statistics> AdjustableGraphicsPixmapItem::scan(const QImage &image)
+{
+    QMap<Channel::Color, Statistics> map;
+    Statistics statL, statR, statG, statB;
+
+    for (int y = 0; y < image.height(); y++) {
+        for (int x = 0; x < image.width(); x++) {
+            QColor c = image.pixelColor(x, y);
+            statL.append(Utility::calcLuminanceFromRGB(c));
+            statR.append(c.red());
+            statG.append(c.green());
+            statB.append(c.blue());
+
+        }
+    }
+
+    statL.update();
+    statR.update();
+    statG.update();
+    statB.update();
+
+    map.insert(Channel::luminance, statL);
+    map.insert(Channel::red, statR);
+    map.insert(Channel::green, statG);
+    map.insert(Channel::blue, statB);
+
+    return map;
+}
+
+Statistics AdjustableGraphicsPixmapItem::statistics(Channel::Color channel) const
+{
+    return _statMap.value(channel);
+}
+
+QMap<Channel::Color, Statistics> AdjustableGraphicsPixmapItem::statistics() const
+{
+    return _statMap;
+}
+
+void AdjustableGraphicsPixmapItem::setStatistics(const QMap<Channel::Color, Statistics> &map)
+{
+    _statMap = map;
+    emit statisticsChanged(_statMap);
+}
+
 

@@ -5,6 +5,7 @@
 #include <QMap>
 
 #include "channel.hpp"
+#include "statistics.hpp"
 
 class AdjustableGraphicsPixmapItem : public QObject, public QGraphicsPixmapItem
 {
@@ -19,24 +20,32 @@ public:
 
     bool channelVisibles(Channel::Color channel) const;
     QMap<Channel::Color, bool> channelVisibles() const;
-    void setChannelVisible(const QMap<Channel::Color, bool> &map);
 
     int brightness() const;
-    void setBrightness(int value);
-
     int contrast() const;
-    void setContrast(int value);
 
     QList<QPointF> toneCurve(Channel::Color channel) const;
     QMap<Channel::Color, QList<QPointF>> toneCurves() const;
-    void setToneCurves(const QMap<Channel::Color, QList<QPointF>> &map);
+
+    Statistics statistics(Channel::Color channel) const;
+    QMap<Channel::Color, Statistics> statistics() const;
 
 public slots:
     void redraw();
     void clear();
 
+    void setBrightness(int value);
+    void setContrast(int value);
+    void setChannelVisible(const QMap<Channel::Color, bool> &map);
+    void setToneCurves(const QMap<Channel::Color, QList<QPointF>> &map);
+    void setStatistics(const QMap<Channel::Color, Statistics> &map);
+
 signals:
     void pixmapChanged(const QPixmap &pixmap);
+    void statisticsChanged(const QMap<Channel::Color, Statistics> &statMap);
+
+private:
+    QMap<Channel::Color, Statistics> scan(const QImage &image);
 
 private:
     QMap<Channel::Color, bool> _visibleMap;
@@ -44,6 +53,7 @@ private:
     int _contrast;
     const QImage *_original;
     QMap<Channel::Color, QList<QPointF>> _curveMap;
+    QMap<Channel::Color, Statistics> _statMap;
 };
 
 #endif // ADJUSTABLEGRAPHICSPIXMAPITEM_HPP

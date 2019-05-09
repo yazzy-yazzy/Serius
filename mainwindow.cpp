@@ -6,30 +6,12 @@
 #include "preferencedialog.hpp"
 #include "tonecurvedialog.hpp"
 #include "brightnesscontrastdialog.hpp"
-#include "adjustablegraphicspixmapitem.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    pixmapItem = new AdjustableGraphicsPixmapItem();
-    pixmapItem->setTransformationMode(Qt::SmoothTransformation);
-
-    scene = new QGraphicsScene(this);
-    scene->addItem(pixmapItem);
-
-    statusLLabel = new QLabel();
-    statusLLabel->setAlignment(Qt::AlignLeft);
-    statusRLabel = new QLabel();
-    statusRLabel->setAlignment(Qt::AlignRight);
-
-    ui->statusBar->addWidget(statusLLabel, 1);
-    ui->statusBar->addWidget(statusRLabel);
-
-    ui->graphicsView->setScene(scene);
-    ui->navigatorWidget->view()->setScene(scene);
 
     connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::open);
     connect(ui->actionSaveAs, &QAction::triggered, this, &MainWindow::saveAs);
@@ -43,14 +25,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionDisplayDock2, &QAction::triggered, this, &MainWindow::updateDock);
     connect(ui->actionDisplayDock3, &QAction::triggered, this, &MainWindow::updateDock);
     connect(ui->actionPreference, &QAction::triggered, this, &MainWindow::preference);
+    connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
+    connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
 
-    connect(ui->graphicsView, &TrackingGraphicsView::viewportChanged, ui->navigatorWidget->view(), &NavigatorGraphicsView::drawROI);
-    connect(ui->graphicsView, &TrackingGraphicsView::scaleChanged, ui->navigatorWidget, &NavigatorWidget::setZoomF);
-    connect(ui->graphicsView, &TrackingGraphicsView::entered, this, &MainWindow::enter);
-    connect(ui->graphicsView, &TrackingGraphicsView::leaved, this, &MainWindow::leave);
-    connect(ui->navigatorWidget, &NavigatorWidget::zoomChangedF, this, &MainWindow::zoom);
-    connect(ui->navigatorWidget->view(), &NavigatorGraphicsView::roiChanged, this, &MainWindow::updateROI);
-    connect(ui->channelwidget, &ChannelWidget::stateChanged, this, &MainWindow::updateChannel);
+    connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::updateAction);
+    connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::updateStatusBar);
+    connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::updateNavigator);
+    connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::updateHistgram);
+    connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::updateChannel);
 
     readSettings();
 
@@ -64,62 +46,41 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionDisplayDock3->setChecked(ui->dockWidget3->isVisible());
 }
 
-void MainWindow::updateDock()
-{
-    ui->dockWidget1->setVisible(ui->actionDisplayDock1->isChecked());
-    ui->dockWidget2->setVisible(ui->actionDisplayDock2->isChecked());
-    ui->dockWidget3->setVisible(ui->actionDisplayDock3->isChecked());
-}
-
-void MainWindow::updateROI(const QRectF &sceneRect)
-{
-    QPointF delta = recentSceneRect.topLeft() - sceneRect.topLeft();
-    if (delta.manhattanLength() > 10.0) {
-        ui->graphicsView->ensureVisible(sceneRect,0,0);
-        recentSceneRect = sceneRect;
-    }
-}
-
-void MainWindow::updateChannel(int state)
-{
-    QMap<Channel::Color, bool> map;
-    map.insert(Channel::red, ui->channelwidget->contains(state, Channel::red));
-    map.insert(Channel::green, ui->channelwidget->contains(state, Channel::green));
-    map.insert(Channel::blue, ui->channelwidget->contains(state, Channel::blue));
-    pixmapItem->setChannelVisible(map);
-    pixmapItem->redraw();
-}
-
-void MainWindow::enter(const QPointF &scenePos)
-{
-    QRect r = scene->sceneRect().toRect();
-    int x = scenePos.toPoint().x();
-    int y = scenePos.toPoint().y();
-
-    if (!r.contains(x, y)) {
-        leave();
-        return;
-    }
-
-    QColor c = image.pixelColor(x, y);
-    QString message(tr("(%1,%2) R:%3 G:%4 B:%5").arg(x).arg(y).arg(c.red()).arg(c.green()).arg(c.blue()));
-    statusRLabel->setText(message);
-}
-
-void MainWindow::leave()
-{
-    statusRLabel->clear();
-}
-
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
+//void MainWindow::enter(const QPointF &scenePos)
+//{
+//    QRect r = scene->sceneRect().toRect();
+//    int x = scenePos.toPoint().x();
+//    int y = scenePos.toPoint().y();
+
+//    if (!r.contains(x, y)) {
+//        leave();
+//        return;
+//    }
+
+//    QColor c = image.pixelColor(x, y);
+//    QString message(tr("(%1,%2) R:%3 G:%4 B:%5").arg(x).arg(y).arg(c.red()).arg(c.green()).arg(c.blue()));
+//    statusRLabel->setText(message);
+//}
+
+//void MainWindow::leave()
+//{
+//    statusRLabel->clear();
+//}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    writeSettings();
-    event->accept();
+    ui->mdiArea->closeAllSubWindows();
+    if (ui->mdiArea->currentSubWindow()) {
+        event->ignore();
+    } else {
+        writeSettings();
+        event->accept();
+    }
 }
 
 void MainWindow::readSettings()
@@ -146,22 +107,130 @@ void MainWindow::writeSettings()
     settings.setValue("MainWindow/windowState", saveState());
 }
 
-void MainWindow::updateView()
+void MainWindow::updateHistgram()
 {
-    ui->navigatorWidget->setEnabled(scene->isActive());
-    ui->histgramWidget->setEnabled(scene->isActive());
-    ui->channelwidget->setEnabled(scene->isActive());
+    ui->histgramWidget->setEnabled(activeMdiChild());
+
+    if (activeMdiChild()) {
+        connect(activeMdiChild()->pixmapItem(), &AdjustableGraphicsPixmapItem::statisticsChanged, ui->histgramWidget, &HistgramWidget::draw);
+    }
+
+    foreach (MdiChild *child, deactiveMdiChilds()) {
+        disconnect(child->pixmapItem(), &AdjustableGraphicsPixmapItem::statisticsChanged, ui->histgramWidget, &HistgramWidget::draw);
+    }
+
+    if (activeMdiChild())
+        ui->histgramWidget->draw(activeMdiChild()->pixmapItem()->statistics());
+    else
+        ui->histgramWidget->clear();
+}
+
+void MainWindow::updateNavigator()
+{
+    ui->navigatorWidget->setEnabled(activeMdiChild());
+    ui->navigatorWidget->view()->setScene(activeMdiChild() ? activeMdiChild()->scene() : nullptr);
+    ui->navigatorWidget->view()->rubberBand()->setVisible(activeMdiChild());    //↑と連動させたい。。。
+
+    if (activeMdiChild()) {
+        connect(activeMdiChild(), &TrackingGraphicsView::roiChanged, ui->navigatorWidget->view(), &NavigatorGraphicsView::drawROI);
+        connect(activeMdiChild(), &TrackingGraphicsView::scaleChanged, ui->navigatorWidget, &NavigatorWidget::setZoomF);
+
+        connect(ui->navigatorWidget, &NavigatorWidget::zoomChangedF, activeMdiChild(), &MdiChild::setZoomF);
+        connect(ui->navigatorWidget->view(), &NavigatorGraphicsView::roiChanged, activeMdiChild(), &MdiChild::ensureVisible);
+    }
+
+    foreach (MdiChild *child, deactiveMdiChilds()) {
+        disconnect(child, &TrackingGraphicsView::roiChanged, ui->navigatorWidget->view(), &NavigatorGraphicsView::drawROI);
+        disconnect(child, &TrackingGraphicsView::scaleChanged, ui->navigatorWidget, &NavigatorWidget::setZoomF);
+
+        disconnect(ui->navigatorWidget, &NavigatorWidget::zoomChangedF, child, &MdiChild::setZoomF);
+        disconnect(ui->navigatorWidget->view(), &NavigatorGraphicsView::roiChanged, child, &MdiChild::ensureVisible);
+    }
+
+    if (activeMdiChild()) {
+        ui->navigatorWidget->setZoomF(activeMdiChild()->zoomF());
+        ui->navigatorWidget->view()->fitToWindow(activeMdiChild()->image());
+        ui->navigatorWidget->view()->drawROI(activeMdiChild()->roi());
+    } else {
+        ui->navigatorWidget->clear();
+    }
+}
+
+void MainWindow::updateChannel()
+{
+    ui->channelwidget->setEnabled(activeMdiChild());
+
+    if (activeMdiChild()) {
+        connect(ui->channelwidget, &ChannelWidget::stateChanged, activeMdiChild()->pixmapItem(), &AdjustableGraphicsPixmapItem::setChannelVisible);
+        connect(ui->channelwidget, &ChannelWidget::stateChanged, activeMdiChild()->pixmapItem(), &AdjustableGraphicsPixmapItem::redraw);
+    }
+
+    foreach (MdiChild *child, deactiveMdiChilds()) {
+        disconnect(ui->channelwidget, &ChannelWidget::stateChanged, child->pixmapItem(), &AdjustableGraphicsPixmapItem::setChannelVisible);
+        disconnect(ui->channelwidget, &ChannelWidget::stateChanged, child->pixmapItem(), &AdjustableGraphicsPixmapItem::redraw);
+    }
+
+    if (activeMdiChild())
+        ui->channelwidget->select(activeMdiChild()->pixmapItem()->channelVisibles());
+    else
+        ui->channelwidget->selectAll();
 }
 
 void MainWindow::updateAction()
 {
-    ui->actionSaveAs->setEnabled(scene->isActive());
-    ui->actionZoomIn->setEnabled(scene->isActive());
-    ui->actionZoomOut->setEnabled(scene->isActive());
-    ui->actionMagnification->setEnabled(scene->isActive());
-    ui->actionFitToWindow->setEnabled(scene->isActive());
-    ui->actionBrightnessContrast->setEnabled(scene->isActive());
-    ui->actionToneCurve->setEnabled(scene->isActive());
+    ui->actionSaveAs->setEnabled(activeMdiChild());
+    ui->actionZoomIn->setEnabled(activeMdiChild());
+    ui->actionZoomOut->setEnabled(activeMdiChild());
+    ui->actionMagnification->setEnabled(activeMdiChild());
+    ui->actionFitToWindow->setEnabled(activeMdiChild());
+    ui->actionBrightnessContrast->setEnabled(activeMdiChild());
+    ui->actionToneCurve->setEnabled(activeMdiChild());
+}
+
+void MainWindow::updateDock()
+{
+    ui->dockWidget1->setVisible(ui->actionDisplayDock1->isChecked());
+    ui->dockWidget2->setVisible(ui->actionDisplayDock2->isChecked());
+    ui->dockWidget3->setVisible(ui->actionDisplayDock3->isChecked());
+}
+
+void MainWindow::updateStatusBar()
+{
+    if (!activeMdiChild()) {
+        ui->statusBar->clearMessage();
+        return;
+    }
+
+    const QImage &image = activeMdiChild()->image();
+    const QString &fileName = activeMdiChild()->windowFilePath();
+
+    const QString message = tr("\"%1\", %2x%3, Depth: %4")
+        .arg(QDir::toNativeSeparators(fileName)).arg(image.width()).arg(image.height()).arg(image.depth());
+    ui->statusBar->showMessage(message);
+}
+
+MdiChild *MainWindow::createMdiChild()
+{
+    MdiChild *child = new MdiChild;
+    return child;
+}
+
+MdiChild *MainWindow::activeMdiChild() const
+{
+    if (QMdiSubWindow *activeSubWindow = ui->mdiArea->activeSubWindow())
+        return qobject_cast<MdiChild *>(activeSubWindow->widget());
+    return nullptr;
+}
+
+QList<MdiChild *> MainWindow::deactiveMdiChilds() const
+{
+    QList<MdiChild *> list;
+    foreach (QMdiSubWindow *subWindow, ui->mdiArea->subWindowList()) {
+        MdiChild *child = qobject_cast<MdiChild *>(subWindow->widget());
+        if (subWindow != ui->mdiArea->activeSubWindow())
+            list.append(child);
+    }
+    return list;
 }
 
 void MainWindow::open()
@@ -183,49 +252,19 @@ void MainWindow::open()
         dialog.setDirectory(recentOpenDir);
 
     if (QDialog::Accepted == dialog.exec()) {
-        QString selectedFile = dialog.selectedFiles().first();
+        QString filename = dialog.selectedFiles().first();
 
-        QImageReader reader(selectedFile);
-        reader.setAutoTransform(false);
-
-        image = reader.read();
-        if (image.isNull()) {
-            QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
-                                     tr("Cannot load %1: %2")
-                                     .arg(QDir::toNativeSeparators(selectedFile), reader.errorString()));
+        MdiChild *child = createMdiChild();
+        if (!child->loadFile(filename)) {
+            child->close();
             return;
         }
 
         QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
-        settings.setValue("FileDialog/RecentOpenDir", QFileInfo(selectedFile).dir().path());
+        settings.setValue("FileDialog/RecentOpenDir", QFileInfo(filename).dir().path());
 
-        pixmapItem->clear();
-        pixmapItem->setImage(&image);
-        pixmapItem->redraw();
-        pixmapItem->setVisible(true);
-
-        scene->setSceneRect(0, 0, image.width(), image.height());
-
-        qreal factorX = static_cast<qreal>(ui->navigatorWidget->view()->width() - 10) / static_cast<qreal>(image.width());
-        qreal factorY = static_cast<qreal>(ui->navigatorWidget->view()->height() - 10) / static_cast<qreal>(image.height());
-        qreal factor = qMin(factorX, factorY);
-        ui->navigatorWidget->view()->resetMatrix();
-        ui->navigatorWidget->view()->scale(factor, factor);
-
-        setWindowFilePath(selectedFile);
-        setWindowTitle(QFileInfo(selectedFile).fileName());
-
-        const QString message = tr("\"%1\", %2x%3, Depth: %4")
-            .arg(QDir::toNativeSeparators(selectedFile)).arg(image.width()).arg(image.height()).arg(image.depth());
-        statusLLabel->setText(message);
-
-        ui->histgramWidget->draw(image);
-        updateChannel(ui->channelwidget->state());
-
-        updateView();
-        updateAction();
-
-        fitToWindow();
+        ui->mdiArea->addSubWindow(child);
+        child->show();
     }
 }
 
@@ -249,89 +288,57 @@ void MainWindow::saveAs()
         dialog.setDirectory(recentSaveDir);
 
     if (QDialog::Accepted == dialog.exec()) {
-        QString selectedFile = dialog.selectedFiles().first();
-        QImageWriter writer(selectedFile);
+        QString filename = dialog.selectedFiles().first();
 
-        QImage image = pixmapItem->pixmap().toImage();
-        if (!writer.write(image)) {
-            QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
-                                     tr("Cannot write %1: %2")
-                                     .arg(QDir::toNativeSeparators(selectedFile)), writer.errorString());
+        if (!activeMdiChild()->saveFile(filename)) {
             return;
         }
 
         QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
-        settings.setValue("FileDialog/RecentSaveDir", QFileInfo(selectedFile).dir().path());
+        settings.setValue("FileDialog/RecentSaveDir", QFileInfo(filename).dir().path());
     }
 }
 
-void MainWindow::zoom(qreal coeff)
+void MainWindow::zoom(qreal factor)
 {
-    ui->graphicsView->resetMatrix();
-    ui->graphicsView->scaleEx(coeff);
+    if (activeMdiChild())
+        activeMdiChild()->setZoomF(factor);
 }
 
 void MainWindow::zoomIn()
 {
-    ui->graphicsView->scaleEx(1.2);
+    if (activeMdiChild())
+        activeMdiChild()->zoomIn();
 }
 
 void MainWindow::zoomOut()
 {
-    ui->graphicsView->scaleEx(0.8);
+    if (activeMdiChild())
+        activeMdiChild()->zoomOut();
 }
 
 void MainWindow::zoomMag()
 {
-    ui->graphicsView->resetMatrix();
-    ui->graphicsView->scaleEx(1.0);
+    if (activeMdiChild())
+        activeMdiChild()->zoomMag();
 }
 
 void MainWindow::fitToWindow()
 {
-    qreal factorX = static_cast<qreal>(ui->graphicsView->width()) / static_cast<qreal>(image.width());
-    qreal factorY = static_cast<qreal>(ui->graphicsView->height()) / static_cast<qreal>(image.height());
-    qreal factor = qMin(factorX, factorY);
-
-    ui->graphicsView->resetMatrix();
-    ui->graphicsView->scaleEx(factor);
+    if (activeMdiChild())
+        activeMdiChild()->fitToWindow();
 }
 
 void MainWindow::brightnessContrast()
 {
-    BrightnessContrastDialog dialog;
-    dialog.setBrightness(pixmapItem->brightness());
-    dialog.setContrast(pixmapItem->contrast());
-
-    if (QDialog::Accepted == dialog.exec()) {
-        pixmapItem->setBrightness(dialog.brightness());
-        pixmapItem->setContrast(dialog.contrast());
-        pixmapItem->redraw();
-
-        ui->histgramWidget->draw(pixmapItem->pixmap().toImage());
-    }
+    if (activeMdiChild())
+        activeMdiChild()->brightnessContrast();
 }
 
 void MainWindow::toneCurve()
 {
-    ToneCurveDialog dialog;
-    dialog.setToneCurves(pixmapItem->toneCurves());
-    dialog.setHistgrams(ui->histgramWidget->statistics());
-
-    connect(&dialog, &ToneCurveDialog::curveChanged, this, &MainWindow::updatePreview, Qt::QueuedConnection);
-
-    if (QDialog::Accepted == dialog.exec()) {
-        pixmapItem->setToneCurves(dialog.points());
-        pixmapItem->redraw();
-
-        ui->histgramWidget->draw(pixmapItem->pixmap().toImage());
-    }
-}
-
-void MainWindow::updatePreview(const QMap<Channel::Color, QList<QPointF>> &map)
-{
-    pixmapItem->setToneCurves(map);
-    pixmapItem->redraw();
+    if (activeMdiChild())
+        activeMdiChild()->toneCurve();
 }
 
 void MainWindow::preference()
@@ -348,4 +355,9 @@ void MainWindow::preference()
         settings.setValue("Application/translator", dialog.language());
         settings.setValue("Application/style", dialog.style());
     }
+}
+
+void MainWindow::about()
+{
+    //TODO
 }

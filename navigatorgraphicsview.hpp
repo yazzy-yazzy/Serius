@@ -11,11 +11,14 @@ class NavigatorGraphicsView : public QGraphicsView
 public:
     explicit NavigatorGraphicsView(QWidget *parent = nullptr);
 
+    QRubberBand *rubberBand() const;
+
 public slots:
-    void drawROI(const QRectF &sceneRect);
+    void drawROI(const QRectF &roi);
+    void fitToWindow(const QImage &image);
 
 signals:
-    void roiChanged(const QRectF &sceneRect);
+    void roiChanged(const QRectF &roi);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -23,9 +26,9 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
-    QRubberBand *rubberBand;
-    bool nowDrag;
-    QPoint offset;
+    QRubberBand *_rubberBand;
+    bool _nowDrag;
+    QPoint _offset;
 };
 
 #endif // NAVIGATORGRAPHICSVIEW_HPP

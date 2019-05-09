@@ -45,28 +45,24 @@ void ChannelWidget::updateState()
     emit stateChanged(state());
 }
 
-int ChannelWidget::state() const
+QMap<Channel::Color, bool> ChannelWidget::state() const
 {
-    int state = r->isChecked() ? Channel::red : 0;
-    state |= g->isChecked() ? Channel::green : 0;
-    state |= b->isChecked() ? Channel::blue : 0;
-    return state;
+    QMap<Channel::Color, bool> map;
+    map.insert(Channel::red, r->isChecked());
+    map.insert(Channel::green, g->isChecked());
+    map.insert(Channel::blue, b->isChecked());
+    return map;
 }
 
-void ChannelWidget::select(int state)
+void ChannelWidget::select(const QMap<Channel::Color, bool> &map)
 {
 //    QSignalBlocker blockerR(r);
 //    QSignalBlocker blockerG(g);
 //    QSignalBlocker blockerB(b);
 
-    r->setChecked(contains(state, Channel::red));
-    g->setChecked(contains(state, Channel::green));
-    b->setChecked(contains(state, Channel::blue));
-}
-
-bool ChannelWidget::contains(int state, Channel::Color color) const
-{
-    return state & color;
+    r->setChecked(map.value(Channel::red, false));
+    g->setChecked(map.value(Channel::green, false));
+    b->setChecked(map.value(Channel::blue, false));
 }
 
 void ChannelWidget::selectAll()

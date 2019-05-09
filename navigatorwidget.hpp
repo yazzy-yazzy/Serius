@@ -23,13 +23,14 @@ public:
     qreal zoomF() const;
 
 public slots:
-    void setZoom(int percent);
-    void setZoomF(qreal coeff);
+    void setZoom(int factor);
+    void setZoomF(qreal factor);
     void update();
+    void clear();
 
 signals:
-    void zoomChanged(int zoom);
-    void zoomChangedF(qreal coeff);
+    void zoomChanged(int factor);
+    void zoomChangedF(qreal factor);
 
 private:
     Ui::NavigatorWidget *ui;

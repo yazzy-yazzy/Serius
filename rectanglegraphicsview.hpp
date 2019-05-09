@@ -12,7 +12,7 @@ public:
     QPen pen() const;
 
 public slots:
-    void drawRectangle(const QRect &sceneRect);
+    void drawRectangle(const QRect &roi);
     void setPen(QPen pen);
 
 protected:

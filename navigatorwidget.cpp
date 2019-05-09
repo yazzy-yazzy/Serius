@@ -10,6 +10,8 @@ NavigatorWidget::NavigatorWidget(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->zoomSlider, &QSlider::valueChanged, this, &NavigatorWidget::update);
+
+    clear();
 }
 
 NavigatorWidget::~NavigatorWidget()
@@ -29,20 +31,20 @@ int NavigatorWidget::zoom() const
 
 qreal NavigatorWidget::zoomF() const
 {
-    return static_cast<qreal>(ui->zoomSlider->value()) / 100;
+    return static_cast<qreal>(ui->zoomSlider->value()) / 100.0;
 }
 
-void NavigatorWidget::setZoom(int percent)
+void NavigatorWidget::setZoom(int factor)
 {
     int min = ui->zoomSlider->minimum();
     int max = ui->zoomSlider->maximum();
 
-    ui->zoomSlider->setValue(qBound(min, percent, max));
+    ui->zoomSlider->setValue(qBound(min, factor, max));
 }
 
-void NavigatorWidget::setZoomF(qreal coeff)
+void NavigatorWidget::setZoomF(qreal factor)
 {
-    setZoom(static_cast<int>(qRound(coeff * 100)));
+    setZoom(static_cast<int>(qRound(factor * 100)));
 }
 
 void NavigatorWidget::update()
@@ -51,4 +53,12 @@ void NavigatorWidget::update()
 
     emit zoomChanged(zoom());
     emit zoomChangedF(zoomF());
+}
+
+void NavigatorWidget::clear()
+{
+    QSignalBlocker blocker(ui->zoomSlider);
+
+    ui->zoomEdit->clear();
+    ui->zoomSlider->setValue(ui->zoomSlider->minimum());
 }

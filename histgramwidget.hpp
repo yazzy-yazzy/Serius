@@ -4,10 +4,9 @@
 #include <QWidget>
 #include <QtCharts>
 #include <QList>
-#include <QMap>
 
-#include "statistics.hpp"
 #include "channel.hpp"
+#include "statistics.hpp"
 
 namespace Ui {
 class HistgramWidget;
@@ -21,11 +20,8 @@ public:
     explicit HistgramWidget(QWidget *parent = nullptr);
     ~HistgramWidget();
 
-    Statistics statistics(Channel::Color) const;
-    QMap<Channel::Color, Statistics> statistics() const;
-
 public slots:
-    void draw(const QImage &image);
+    void draw(const QMap<Channel::Color, Statistics> &statMap);
     void clear();
 
 private slots:
@@ -34,11 +30,10 @@ private slots:
 
 private:
     void createChart();
-    void scan(const QImage &image);
-    void drawLuminance();
-    void drawRGB();
-    void drawLuminanceText();
-    void drawRGBText();
+    void drawLuminance(const QMap<Channel::Color, Statistics> &statMap);
+    void drawRGB(const QMap<Channel::Color, Statistics> &statMap);
+    void drawLuminanceText(const QMap<Channel::Color, Statistics> &statMap);
+    void drawRGBText(const QMap<Channel::Color, Statistics> &statMap);
 
 private:
     Ui::HistgramWidget *ui;
@@ -46,8 +41,6 @@ private:
     QChart *chart;
     QValueAxis *axisX;
     QValueAxis *axisY;
-
-    QMap<Channel::Color, Statistics> statMap;
 
     QList<QAbstractSeries *> seriesListL;
     QList<QAbstractSeries *> seriesListRGB;

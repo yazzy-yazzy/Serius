@@ -11,9 +11,10 @@ public:
     explicit TrackingGraphicsView(QWidget *parent = nullptr);
 
     void scaleEx(qreal s);
+    QRectF roi() const;
 
 signals:
-    void viewportChanged(const QRectF &sceneRect);
+    void roiChanged(const QRectF &roi);
     void scaleChanged(qreal s);
     void entered(const QPointF &scenePos);
     void leaved();
@@ -26,7 +27,7 @@ protected:
     bool event(QEvent *event) override;
 
 private:
-    QRectF recentSceneRect;
+    QRectF _roi;
 };
 
 #endif // TRACKINGGRAPHICSVIEW_HPP

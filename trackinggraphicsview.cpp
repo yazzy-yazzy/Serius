@@ -10,11 +10,11 @@ TrackingGraphicsView::TrackingGraphicsView(QWidget *parent) : QGraphicsView (par
 void TrackingGraphicsView::paintEvent(QPaintEvent *event)
 {
     if (scene() && scene()->isActive()) {
-        QRectF sceneRect = mapToScene(viewport()->geometry()).boundingRect();
+        QRectF roi = mapToScene(viewport()->geometry()).boundingRect();
 
-        if (recentSceneRect != sceneRect) {
-            emit viewportChanged(sceneRect);
-            recentSceneRect = sceneRect;
+        if (_roi != roi) {
+            emit roiChanged(roi);
+            _roi = roi;
         }
 
         event->accept();
@@ -57,4 +57,9 @@ bool TrackingGraphicsView::event(QEvent *event)
         emit leaved();
 
     return QGraphicsView::event(event);
+}
+
+QRectF TrackingGraphicsView::roi() const
+{
+    return _roi;
 }

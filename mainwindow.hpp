@@ -3,11 +3,10 @@
 
 #include <QMainWindow>
 #include <QMap>
-#include "channel.hpp"
+#include "mdichild.hpp"
 
 QT_FORWARD_DECLARE_CLASS(QGraphicsScene);
 QT_FORWARD_DECLARE_CLASS(AdjustableGraphicsPixmapItem);
-QT_FORWARD_DECLARE_CLASS(QLabel);
 
 namespace Ui {
 class MainWindow;
@@ -27,7 +26,7 @@ protected:
 private slots:
     void open();
     void saveAs();
-    void zoom(qreal coeff);
+    void zoom(qreal factor);
     void zoomIn();
     void zoomOut();
     void zoomMag();
@@ -35,28 +34,30 @@ private slots:
     void brightnessContrast();
     void toneCurve();
     void preference();
+    void about();
 
-    void updateView();
     void updateAction();
-    void updateROI(const QRectF &sceneRect);
-    void updateChannel(int state);
-    void updatePreview(const QMap<Channel::Color, QList<QPointF>> &map);
-    void enter(const QPointF &scenePos);
-    void leave();
+    void updateStatusBar();
+    void updateHistgram();
+    void updateNavigator();
+    void updateChannel();
+//    void updateROI(const QRectF &sceneRect);
+//    void updateChannel(int state);
+//    void updatePreview(const QMap<Channel::Color, QList<QPointF>> &map);
+//    void enter(const QPointF &scenePos);
+//    void leave();
     void updateDock();
 
 private:
     void readSettings();
     void writeSettings();
 
+    MdiChild *createMdiChild();
+    MdiChild *activeMdiChild() const;
+    QList<MdiChild *> deactiveMdiChilds() const;
+
 private:
     Ui::MainWindow *ui;
-    QGraphicsScene *scene;
-    AdjustableGraphicsPixmapItem *pixmapItem;
-    QImage image;
-    QRectF recentSceneRect;
-    QLabel *statusLLabel;
-    QLabel *statusRLabel;
 };
 
 #endif // MAINWINDOW_HPP

@@ -1,9 +1,6 @@
 #include "histgramwidget.hpp"
 #include "ui_histgramwidget.h"
 
-#include "utility.hpp"
-#include "channel.hpp"
-
 HistgramWidget::HistgramWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::HistgramWidget)
@@ -60,45 +57,17 @@ void HistgramWidget::createChart()
 //    chart->setPlotAreaBackgroundVisible(true);
 }
 
-void HistgramWidget::draw(const QImage &image)
+void HistgramWidget::draw(const QMap<Channel::Color, Statistics> &statMap)
 {
     clear();
 
-    scan(image);
-
-    drawLuminance();
-    drawRGB();
+    drawLuminance(statMap);
+    drawRGB(statMap);
 
     setLuminanceVisible(true);
     setRGBVisible(ui->rgbCheckBox->isChecked());
 
-    drawLuminanceText();
-}
-
-void HistgramWidget::scan(const QImage &image)
-{
-    Statistics statL, statR, statG, statB;
-
-    for (int y = 0; y < image.height(); y++) {
-        for (int x = 0; x < image.width(); x++) {
-            QColor c = image.pixelColor(x, y);
-            statL.append(Utility::calcLuminanceFromRGB(c));
-            statR.append(c.red());
-            statG.append(c.green());
-            statB.append(c.blue());
-
-        }
-    }
-
-    statL.update();
-    statR.update();
-    statG.update();
-    statB.update();
-
-    statMap.insert(Channel::luminance, statL);
-    statMap.insert(Channel::red, statR);
-    statMap.insert(Channel::green, statG);
-    statMap.insert(Channel::blue, statB);
+    drawLuminanceText(statMap);
 }
 
 void HistgramWidget::clear()
@@ -112,13 +81,11 @@ void HistgramWidget::clear()
     ui->editMedian->clear();
     ui->editPixels->clear();
 
-    statMap.clear();
-
     seriesListL.clear();
     seriesListRGB.clear();
 }
 
-void HistgramWidget::drawLuminance()
+void HistgramWidget::drawLuminance(const QMap<Channel::Color, Statistics> &statMap)
 {
     Statistics statL = statMap.value(Channel::luminance);
     axisY->setRange(0, static_cast<qreal>(statL.histgramMax()));
@@ -158,7 +125,7 @@ void HistgramWidget::drawLuminance()
     seriesListL.append(seriesA);
 }
 
-void HistgramWidget::drawRGB()
+void HistgramWidget::drawRGB(const QMap<Channel::Color, Statistics> &statMap)
 {
     Statistics statR = statMap.value(Channel::red);
     Statistics statG = statMap.value(Channel::green);
@@ -240,7 +207,7 @@ void HistgramWidget::drawRGB()
 //    seriesListRGB.append(seriesBA);
 }
 
-void HistgramWidget::drawLuminanceText()
+void HistgramWidget::drawLuminanceText(const QMap<Channel::Color, Statistics> &statMap)
 {
     Statistics statL = statMap.value(Channel::luminance);
 
@@ -250,7 +217,7 @@ void HistgramWidget::drawLuminanceText()
     ui->editPixels->setText(QString("%L1").arg(statL.count()));
 }
 
-void HistgramWidget::drawRGBText()
+void HistgramWidget::drawRGBText(const QMap<Channel::Color, Statistics> &statMap)
 {
     Statistics statL = statMap.value(Channel::luminance);
     Statistics statR = statMap.value(Channel::red);
@@ -270,16 +237,6 @@ void HistgramWidget::drawRGBText()
                             .arg(statG.median(), 0, 'f', 2)
                             .arg(statB.median(), 0, 'f', 2));
     ui->editPixels->setText(QString("%L1").arg(statL.count()));
-}
-
-Statistics HistgramWidget::statistics(Channel::Color channel) const
-{
-    return statMap.value(channel);
-}
-
-QMap<Channel::Color, Statistics> HistgramWidget::statistics() const
-{
-    return statMap;
 }
 
 void HistgramWidget::setLuminanceVisible(bool visible)

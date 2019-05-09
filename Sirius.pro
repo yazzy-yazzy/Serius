@@ -44,7 +44,8 @@ SOURCES += \
     preferencedialog.cpp \
     utility.cpp \
     brightnesscontrastdialog.cpp \
-    adjustablegraphicspixmapitem.cpp
+    adjustablegraphicspixmapitem.cpp \
+    mdichild.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -67,7 +68,8 @@ HEADERS += \
     singleton.hpp \
     channel.hpp \
     brightnesscontrastdialog.hpp \
-    adjustablegraphicspixmapitem.hpp
+    adjustablegraphicspixmapitem.hpp \
+    mdichild.hpp
 
 FORMS += \
     mainwindow.ui \

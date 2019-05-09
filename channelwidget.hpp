@@ -18,16 +18,14 @@ public:
     explicit ChannelWidget(QWidget *parent = nullptr);
     ~ChannelWidget();
 
-    int state() const;
-
-    bool contains(int state, Channel::Color color) const;
+    QMap<Channel::Color, bool> state() const;
 
 public slots:
-    void select(int state);
+    void select(const QMap<Channel::Color, bool> &map);
     void selectAll();
 
 signals:
-    void stateChanged(int state);
+    void stateChanged(const QMap<Channel::Color, bool> &map);
 
 private slots:
     void updateState();
