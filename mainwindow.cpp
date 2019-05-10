@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionDisplayDock1, &QAction::triggered, this, &MainWindow::updateDock);
     connect(ui->actionDisplayDock2, &QAction::triggered, this, &MainWindow::updateDock);
     connect(ui->actionDisplayDock3, &QAction::triggered, this, &MainWindow::updateDock);
+    connect(ui->actionDisplayUndoStack, &QAction::triggered, this, &MainWindow::updateDock);
     connect(ui->actionPreference, &QAction::triggered, this, &MainWindow::preference);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
     connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
@@ -44,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionDisplayDock1->setChecked(ui->dockWidget1->isVisible());
     ui->actionDisplayDock2->setChecked(ui->dockWidget2->isVisible());
     ui->actionDisplayDock3->setChecked(ui->dockWidget3->isVisible());
+    ui->actionDisplayUndoStack->setChecked(ui->dockWidget4->isVisible());
 }
 
 MainWindow::~MainWindow()
@@ -185,6 +187,35 @@ void MainWindow::updateAction()
     ui->actionFitToWindow->setEnabled(activeMdiChild());
     ui->actionBrightnessContrast->setEnabled(activeMdiChild());
     ui->actionToneCurve->setEnabled(activeMdiChild());
+
+    if (activeMdiChild()) {
+        connect(ui->actionUndo, &QAction::triggered, activeMdiChild(), &MdiChild::undo);
+        connect(ui->actionRedo, &QAction::triggered, activeMdiChild(), &MdiChild::redo);
+
+        connect(activeMdiChild(), &MdiChild::canUndoChanged, this, [=] (bool canUndo) {
+            ui->actionUndo->setEnabled(canUndo);
+        });
+        connect(activeMdiChild(), &MdiChild::canRedoChanged, this, [=] (bool canRedo) {
+            ui->actionRedo->setEnabled(canRedo);
+        });
+    }
+
+    foreach (MdiChild *child, deactiveMdiChilds()) {
+        disconnect(ui->actionUndo, &QAction::triggered, child, &MdiChild::undo);
+        disconnect(ui->actionRedo, &QAction::triggered, child, &MdiChild::redo);
+
+        connect(child, &MdiChild::canUndoChanged, this, [=] (bool) {});
+        connect(child, &MdiChild::canRedoChanged, this, [=] (bool) {});
+    }
+
+    if (activeMdiChild()) {
+        ui->actionUndo->setEnabled(activeMdiChild()->undoStack()->canUndo());
+        ui->actionRedo->setEnabled(activeMdiChild()->undoStack()->canRedo());
+    } else {
+        ui->actionUndo->setEnabled(false);
+        ui->actionRedo->setEnabled(false);
+    }
+    ui->undoView->setStack(activeMdiChild() ? activeMdiChild()->undoStack() : nullptr);
 }
 
 void MainWindow::updateDock()
@@ -192,6 +223,7 @@ void MainWindow::updateDock()
     ui->dockWidget1->setVisible(ui->actionDisplayDock1->isChecked());
     ui->dockWidget2->setVisible(ui->actionDisplayDock2->isChecked());
     ui->dockWidget3->setVisible(ui->actionDisplayDock3->isChecked());
+    ui->dockWidget4->setVisible(ui->actionDisplayUndoStack->isChecked());
 }
 
 void MainWindow::updateStatusBar()

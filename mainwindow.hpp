@@ -2,11 +2,7 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
-#include <QMap>
 #include "mdichild.hpp"
-
-QT_FORWARD_DECLARE_CLASS(QGraphicsScene);
-QT_FORWARD_DECLARE_CLASS(AdjustableGraphicsPixmapItem);
 
 namespace Ui {
 class MainWindow;
@@ -41,11 +37,6 @@ private slots:
     void updateHistgram();
     void updateNavigator();
     void updateChannel();
-//    void updateROI(const QRectF &sceneRect);
-//    void updateChannel(int state);
-//    void updatePreview(const QMap<Channel::Color, QList<QPointF>> &map);
-//    void enter(const QPointF &scenePos);
-//    void leave();
     void updateDock();
 
 private:

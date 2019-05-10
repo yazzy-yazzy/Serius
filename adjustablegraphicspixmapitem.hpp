@@ -42,7 +42,7 @@ public slots:
 
 signals:
     void pixmapChanged(const QPixmap &pixmap);
-    void statisticsChanged(const QMap<Channel::Color, Statistics> &statMap);
+    void statisticsChanged(const QMap<Channel::Color, Statistics> &map);
 
 private:
     QMap<Channel::Color, Statistics> scan(const QImage &image);

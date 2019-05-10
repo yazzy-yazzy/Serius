@@ -12,6 +12,11 @@
         <file alias="desktop">assets/image/preferences-desktop-4.png</file>
         <file alias="language">assets/image/applications-education-language.png</file>
         <file alias="system">assets/image/applications-system.png</file>
+        <file alias="redo">assets/image/edit-redo-3.png</file>
+        <file alias="undo">assets/image/edit-undo-3.png</file>
+        <file alias="qt">assets/image/qt-designer-2.png</file>
+        <file alias="brightness-contrast">assets/image/thumbnail.png</file>
+        <file alias="about">assets/image/help-about-2.png</file>
     </qresource>
     <qresource prefix="/">
         <file>assets/translate/language_en.qm</file>

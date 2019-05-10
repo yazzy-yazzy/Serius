@@ -6,13 +6,153 @@
 #include "tonecurvedialog.hpp"
 #include "utility.hpp"
 
-MdiChild::MdiChild(QWidget *parent) : TrackingGraphicsView(parent)
+class ZoomInCommand : public QUndoCommand
+{
+public:
+    ZoomInCommand(MdiChild *child, QUndoCommand *parent = nullptr);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    MdiChild *_child;
+};
+
+ZoomInCommand::ZoomInCommand(MdiChild *child, QUndoCommand *parent) :
+    QUndoCommand(parent),
+    _child(child)
+{
+    setText("Zoom-In");
+}
+
+void ZoomInCommand::undo()
+{
+    _child->scaleEx(0.8);
+}
+
+void ZoomInCommand::redo()
+{
+    _child->scaleEx(1.2);
+}
+
+class ZoomOutCommand : public QUndoCommand
+{
+public:
+    ZoomOutCommand(MdiChild *child, QUndoCommand *parent = nullptr);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    MdiChild *_child;
+};
+
+ZoomOutCommand::ZoomOutCommand(MdiChild *child, QUndoCommand *parent) :
+    QUndoCommand(parent),
+    _child(child)
+{
+    setText("Zoom-Out");
+}
+
+void ZoomOutCommand::undo()
+{
+    _child->scaleEx(1.2);
+}
+
+void ZoomOutCommand::redo()
+{
+    _child->scaleEx(0.8);
+}
+
+class ZoomMagCommand : public QUndoCommand
+{
+public:
+    ZoomMagCommand(MdiChild *child, QUndoCommand *parent = nullptr);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    MdiChild *_child;
+    qreal _factor;
+};
+
+ZoomMagCommand::ZoomMagCommand(MdiChild *child, QUndoCommand *parent) :
+    QUndoCommand(parent),
+    _child(child),
+    _factor(1.0)
+{
+    setText("Zoom-100%");
+}
+
+void ZoomMagCommand::undo()
+{
+    _child->resetMatrix();
+    _child->scaleEx(_factor);
+}
+
+void ZoomMagCommand::redo()
+{
+    _factor = _child->matrix().m11();
+    _child->resetMatrix();
+    _child->scaleEx(1.0);
+}
+
+class FitToWindowCommand : public QUndoCommand
+{
+public:
+    FitToWindowCommand(MdiChild *child, QUndoCommand *parent = nullptr);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    MdiChild *_child;
+    qreal _factor;
+};
+
+FitToWindowCommand::FitToWindowCommand(MdiChild *child, QUndoCommand *parent) :
+    QUndoCommand(parent),
+    _child(child),
+    _factor(1.0)
+{
+    setText("Fit to Window");
+}
+
+void FitToWindowCommand::undo()
+{
+    _child->resetMatrix();
+    _child->scaleEx(_factor);
+}
+
+void FitToWindowCommand::redo()
+{
+    _factor = _child->matrix().m11();
+
+    qreal factorX = static_cast<qreal>(_child->width()) / static_cast<qreal>(_child->image().width());
+    qreal factorY = static_cast<qreal>(_child->height()) / static_cast<qreal>(_child->image().height());
+    qreal factor = qMin(factorX, factorY);
+
+    _child->resetMatrix();
+    _child->scaleEx(factor);
+}
+
+
+
+
+
+MdiChild::MdiChild(QWidget *parent) :
+    TrackingGraphicsView(parent),
+    _undoStack(new QUndoStack)
 {
     _pixmapItem = new AdjustableGraphicsPixmapItem();
     _pixmapItem->setTransformationMode(Qt::SmoothTransformation);
 
     _scene = new QGraphicsScene(this);
     _scene->addItem(_pixmapItem);
+
+    connect(_undoStack, SIGNAL(canUndoChanged(bool)), this, SIGNAL(canUndoChanged(bool)));
+    connect(_undoStack, SIGNAL(canRedoChanged(bool)), this, SIGNAL(canRedoChanged(bool)));
 
     setScene(_scene);
 
@@ -38,28 +178,22 @@ void MdiChild::setZoomF(qreal factor)
 
 void MdiChild::zoomIn()
 {
-    scaleEx(1.2);
+    undoStack()->push(new ZoomInCommand(this));
 }
 
 void MdiChild::zoomOut()
 {
-    scaleEx(0.8);
+    undoStack()->push(new ZoomOutCommand(this));
 }
 
 void MdiChild::zoomMag()
 {
-    resetMatrix();
-    scaleEx(1.0);
+    undoStack()->push(new ZoomMagCommand(this));
 }
 
 void MdiChild::fitToWindow()
 {
-    qreal factorX = static_cast<qreal>(width()) / static_cast<qreal>(_image.width());
-    qreal factorY = static_cast<qreal>(height()) / static_cast<qreal>(_image.height());
-    qreal factor = qMin(factorX, factorY);
-
-    resetMatrix();
-    scaleEx(factor);
+    undoStack()->push(new FitToWindowCommand(this));
 }
 
 void MdiChild::brightnessContrast()
@@ -72,8 +206,6 @@ void MdiChild::brightnessContrast()
         _pixmapItem->setBrightness(dialog.brightness());
         _pixmapItem->setContrast(dialog.contrast());
         _pixmapItem->redraw();
-
-//        ui->histgramWidget->draw(pixmapItem->pixmap().toImage());
     }
 }
 
@@ -121,6 +253,7 @@ bool MdiChild::loadFile(const QString &filename)
     setWindowTitle(strippedName(filename));
 
     fitToWindow();
+    _undoStack->clear();
 
     return true;
 }
@@ -157,4 +290,19 @@ const AdjustableGraphicsPixmapItem *MdiChild::pixmapItem() const
 qreal MdiChild::zoomF() const
 {
     return matrix().m11();
+}
+
+void MdiChild::undo()
+{
+    _undoStack->undo();
+}
+
+void MdiChild::redo()
+{
+    _undoStack->redo();
+}
+
+QUndoStack *MdiChild::undoStack() const
+{
+    return _undoStack;
 }
