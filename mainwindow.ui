@@ -83,7 +83,6 @@
     <addaction name="actionDisplayDock3"/>
     <addaction name="actionDisplayUndoStack"/>
     <addaction name="separator"/>
-    <addaction name="actionPreference"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -92,8 +91,7 @@
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
     <addaction name="separator"/>
-    <addaction name="actionBrightnessContrast"/>
-    <addaction name="actionToneCurve"/>
+    <addaction name="actionPreference"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -102,9 +100,46 @@
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQt"/>
    </widget>
+   <widget class="QMenu" name="menuImage">
+    <property name="title">
+     <string>Image</string>
+    </property>
+    <widget class="QMenu" name="menuAdjustments">
+     <property name="title">
+      <string>Adjustments</string>
+     </property>
+     <addaction name="actionBrightnessContrast"/>
+     <addaction name="actionToneCurve"/>
+    </widget>
+    <widget class="QMenu" name="menuRotate">
+     <property name="title">
+      <string>Rotate</string>
+     </property>
+     <addaction name="actionRotateCW90"/>
+     <addaction name="actionRotateCCW90"/>
+    </widget>
+    <widget class="QMenu" name="menuMirror">
+     <property name="title">
+      <string>Mirror</string>
+     </property>
+     <addaction name="actionFlipHorizontal"/>
+     <addaction name="actionFlipVertical"/>
+    </widget>
+    <addaction name="menuAdjustments"/>
+    <addaction name="actionDuplicate"/>
+    <addaction name="menuRotate"/>
+    <addaction name="menuMirror"/>
+   </widget>
+   <widget class="QMenu" name="menuFilter">
+    <property name="title">
+     <string>Filter</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuView"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuImage"/>
+   <addaction name="menuFilter"/>
+   <addaction name="menuView"/>
    <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -419,6 +454,11 @@
    <property name="checked">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/dock</normaloff>
+     <normalon>:/images/dock</normalon>:/images/dock</iconset>
+   </property>
    <property name="text">
     <string>Dock1</string>
    </property>
@@ -433,6 +473,11 @@
    <property name="checked">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/dock</normaloff>
+     <normalon>:/images/dock</normalon>:/images/dock</iconset>
+   </property>
    <property name="text">
     <string>Dock2</string>
    </property>
@@ -446,6 +491,11 @@
    </property>
    <property name="checked">
     <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/dock</normaloff>
+     <normalon>:/images/dock</normalon>:/images/dock</iconset>
    </property>
    <property name="text">
     <string>Dock3</string>
@@ -513,6 +563,9 @@
    <property name="text">
     <string>About...</string>
    </property>
+   <property name="shortcut">
+    <string/>
+   </property>
   </action>
   <action name="actionAboutQt">
    <property name="icon">
@@ -521,6 +574,9 @@
    </property>
    <property name="text">
     <string>About Qt...</string>
+   </property>
+   <property name="shortcut">
+    <string/>
    </property>
   </action>
   <action name="actionUndo">
@@ -557,11 +613,106 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/dock</normaloff>
+     <normalon>:/images/dock</normalon>:/images/dock</iconset>
+   </property>
    <property name="text">
     <string>Undo Stack</string>
    </property>
    <property name="toolTip">
     <string>Show or hide</string>
+   </property>
+   <property name="shortcut">
+    <string/>
+   </property>
+  </action>
+  <action name="actionDuplicate">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/copy</normaloff>:/images/copy</iconset>
+   </property>
+   <property name="text">
+    <string>Duplicate</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionFlipHorizontal">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/flip-horizontal</normaloff>:/images/flip-horizontal</iconset>
+   </property>
+   <property name="text">
+    <string>Horizontal</string>
+   </property>
+   <property name="toolTip">
+    <string>Flip Horizontal</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+H</string>
+   </property>
+  </action>
+  <action name="actionFlipVertical">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/flip-vertical</normaloff>:/images/flip-vertical</iconset>
+   </property>
+   <property name="text">
+    <string>Vertical</string>
+   </property>
+   <property name="toolTip">
+    <string>Flip Vertical</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+V</string>
+   </property>
+  </action>
+  <action name="actionRotateCW90">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/rotate-cw90</normaloff>:/images/rotate-cw90</iconset>
+   </property>
+   <property name="text">
+    <string>CW90</string>
+   </property>
+   <property name="toolTip">
+    <string>Rotate clock-wise 90</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionRotateCCW90">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/rotate-ccw90</normaloff>:/images/rotate-ccw90</iconset>
+   </property>
+   <property name="text">
+    <string>CCW90</string>
+   </property>
+   <property name="toolTip">
+    <string>Rotate counter-clock-wise 90</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
    </property>
   </action>
  </widget>

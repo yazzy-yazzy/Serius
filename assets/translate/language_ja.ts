@@ -103,83 +103,179 @@
         <translation>編集</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="99"/>
+        <location filename="../../mainwindow.ui" line="98"/>
         <source>Help</source>
         <translation>ヘルプ</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="278"/>
+        <location filename="../../mainwindow.ui" line="105"/>
+        <source>Image</source>
+        <translation>イメージ</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="109"/>
+        <source>Adjustments</source>
+        <translation>色調補正</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="116"/>
+        <source>Rotate</source>
+        <translation>回転</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="123"/>
+        <source>Mirror</source>
+        <translation>鏡像</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="135"/>
+        <source>Filter</source>
+        <translation>フィルター</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="314"/>
+        <location filename="../../mainwindow.ui" line="622"/>
         <source>Undo Stack</source>
         <translation>操作履歴</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="310"/>
+        <location filename="../../mainwindow.ui" line="346"/>
         <source>Open...</source>
         <translation>開く...</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="313"/>
+        <location filename="../../mainwindow.ui" line="349"/>
         <source>Open an existing file</source>
         <translation>既存ファイルを開く</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="316"/>
+        <location filename="../../mainwindow.ui" line="352"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="321"/>
+        <location filename="../../mainwindow.ui" line="357"/>
         <source>Exit</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="324"/>
+        <location filename="../../mainwindow.ui" line="360"/>
         <source>Exit this application</source>
         <translation>このアプリケーションを終了する</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="336"/>
+        <location filename="../../mainwindow.ui" line="372"/>
         <source>Zoom In</source>
         <translation>ズームイン</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="339"/>
+        <location filename="../../mainwindow.ui" line="375"/>
         <source>Zoom in</source>
         <translation>ズームイン</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="342"/>
+        <location filename="../../mainwindow.ui" line="378"/>
         <source>Ctrl+Shift+;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="354"/>
+        <location filename="../../mainwindow.ui" line="390"/>
         <source>Zoom Out</source>
         <translation>ズームアウト</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="357"/>
+        <location filename="../../mainwindow.ui" line="393"/>
         <source>Zoom out</source>
         <translation>ズームアウト</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="360"/>
+        <location filename="../../mainwindow.ui" line="396"/>
         <source>Ctrl+-</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="372"/>
+        <location filename="../../mainwindow.ui" line="408"/>
         <source>100%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="375"/>
+        <location filename="../../mainwindow.ui" line="411"/>
         <source>Zoom 100%</source>
         <translation>等倍</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="378"/>
+        <location filename="../../mainwindow.ui" line="414"/>
         <source>Ctrl+S</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="640"/>
+        <source>Duplicate</source>
+        <translation>複製</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="643"/>
+        <source>Ctrl+D</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="655"/>
+        <source>Horizontal</source>
+        <translation>水平</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="658"/>
+        <source>Flip Horizontal</source>
+        <translation>鏡像（水平）</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="661"/>
+        <source>Ctrl+Shift+H</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="673"/>
+        <source>Vertical</source>
+        <translation>垂直</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="676"/>
+        <source>Flip Vertical</source>
+        <translation>鏡像（垂直）</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="679"/>
+        <source>Ctrl+Shift+V</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="691"/>
+        <source>CW90</source>
+        <translation>90度（時計回り）</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="694"/>
+        <source>Rotate clock-wise 90</source>
+        <translation>90度回転（時計回り）</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="697"/>
+        <source>Ctrl+R</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="709"/>
+        <source>CCW90</source>
+        <translation>90度（反時計回り）</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="712"/>
+        <source>Rotate counter-clock-wise 90</source>
+        <translation>90度回転（反時計回り）</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="715"/>
+        <source>Ctrl+Shift+R</source>
         <translation></translation>
     </message>
     <message>
@@ -187,144 +283,130 @@
         <translation type="vanished">ウインドウに合わせる</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="390"/>
+        <location filename="../../mainwindow.ui" line="426"/>
         <source>Fit to Window</source>
         <translation>ウインドウに合わせる</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="393"/>
+        <location filename="../../mainwindow.ui" line="429"/>
         <source>Fit to window</source>
         <translation>ウインドウに合わせる</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="396"/>
+        <location filename="../../mainwindow.ui" line="432"/>
         <source>Ctrl+F</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="408"/>
+        <location filename="../../mainwindow.ui" line="444"/>
         <source>SaveAs...</source>
         <translation>保存...</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="411"/>
+        <location filename="../../mainwindow.ui" line="447"/>
         <source>Save an displaying image</source>
         <translation>画面イメージを保存する</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="422"/>
+        <location filename="../../mainwindow.ui" line="463"/>
         <source>Dock1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="425"/>
-        <location filename="../../mainwindow.ui" line="442"/>
-        <location filename="../../mainwindow.ui" line="459"/>
+        <location filename="../../mainwindow.ui" line="466"/>
+        <location filename="../../mainwindow.ui" line="485"/>
+        <location filename="../../mainwindow.ui" line="504"/>
+        <location filename="../../mainwindow.ui" line="625"/>
         <source>Show or hide</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="428"/>
-        <source>Ctrl+1</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../../mainwindow.ui" line="439"/>
+        <location filename="../../mainwindow.ui" line="482"/>
         <source>Dock2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="445"/>
-        <source>Ctrl+2</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../../mainwindow.ui" line="456"/>
+        <location filename="../../mainwindow.ui" line="501"/>
         <source>Dock3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="462"/>
-        <source>Ctrl+3</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../../mainwindow.ui" line="474"/>
+        <location filename="../../mainwindow.ui" line="516"/>
         <source>Tone Curve...</source>
         <translation>トーンカーブ...</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="477"/>
+        <location filename="../../mainwindow.ui" line="519"/>
         <source>Adjust tonecurve</source>
         <translation>画面イメージをトーンカーブで調整する</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="480"/>
+        <location filename="../../mainwindow.ui" line="522"/>
         <source>Ctrl+T</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="489"/>
+        <location filename="../../mainwindow.ui" line="531"/>
         <source>Preference...</source>
         <translation>環境設定...</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="492"/>
+        <location filename="../../mainwindow.ui" line="534"/>
         <source>Preference setting</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="495"/>
+        <location filename="../../mainwindow.ui" line="537"/>
         <source>Ctrl+,</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="507"/>
+        <location filename="../../mainwindow.ui" line="549"/>
         <source>Brightness/Contrast...</source>
         <translation>明るさ・コントラスト...</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="510"/>
+        <location filename="../../mainwindow.ui" line="552"/>
         <source>Brightness/Contrast</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="513"/>
+        <location filename="../../mainwindow.ui" line="555"/>
         <source>Ctrl+B</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="522"/>
+        <location filename="../../mainwindow.ui" line="564"/>
         <source>About...</source>
         <translation>このアプリケーションについて...</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="531"/>
+        <location filename="../../mainwindow.ui" line="576"/>
         <source>About Qt...</source>
         <translation>Qtについて...</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="543"/>
+        <location filename="../../mainwindow.ui" line="591"/>
         <source>Undo</source>
         <translation>元に戻す</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="546"/>
+        <location filename="../../mainwindow.ui" line="594"/>
         <source>Ctrl+Z</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="558"/>
+        <location filename="../../mainwindow.ui" line="606"/>
         <source>Redo</source>
         <translation>やり直す</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="561"/>
+        <location filename="../../mainwindow.ui" line="609"/>
         <source>Ctrl+Shift+Z</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.cpp" line="274"/>
+        <location filename="../../mainwindow.cpp" line="287"/>
         <source>Open File</source>
         <translation>ファイルを開く</translation>
     </message>
@@ -333,12 +415,12 @@
         <translation type="vanished">%1を読み込み出来ませんでした。%2</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.cpp" line="238"/>
+        <location filename="../../mainwindow.cpp" line="251"/>
         <source>&quot;%1&quot;, %2x%3, Depth: %4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.cpp" line="309"/>
+        <location filename="../../mainwindow.cpp" line="322"/>
         <source>Save File As</source>
         <translation>ファイルを保存する</translation>
     </message>

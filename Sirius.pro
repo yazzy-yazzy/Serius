@@ -45,7 +45,8 @@ SOURCES += \
     utility.cpp \
     brightnesscontrastdialog.cpp \
     adjustablegraphicspixmapitem.cpp \
-    mdichild.cpp
+    mdichild.cpp \
+    versiondialog.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -69,7 +70,8 @@ HEADERS += \
     channel.hpp \
     brightnesscontrastdialog.hpp \
     adjustablegraphicspixmapitem.hpp \
-    mdichild.hpp
+    mdichild.hpp \
+    versiondialog.hpp
 
 FORMS += \
     mainwindow.ui \
@@ -79,7 +81,8 @@ FORMS += \
     tonecurvedialog.ui \
     tonecurvewidget.ui \
     preferencedialog.ui \
-    brightnesscontrastdialog.ui
+    brightnesscontrastdialog.ui \
+    versiondialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

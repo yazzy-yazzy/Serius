@@ -22,14 +22,19 @@ protected:
 private slots:
     void open();
     void saveAs();
+    void preference();
+    void brightnessContrast();
+    void toneCurve();
+    void duplicate();
+    void flipHorizontal();
+    void flipVertical();
+    void rotateCW90();
+    void rotateCCW90();
     void zoom(qreal factor);
     void zoomIn();
     void zoomOut();
     void zoomMag();
     void fitToWindow();
-    void brightnessContrast();
-    void toneCurve();
-    void preference();
     void about();
 
     void updateAction();

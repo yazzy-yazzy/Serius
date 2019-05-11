@@ -6,6 +6,7 @@
 #include "preferencedialog.hpp"
 #include "tonecurvedialog.hpp"
 #include "brightnesscontrastdialog.hpp"
+#include "versiondialog.hpp"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -28,6 +29,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionPreference, &QAction::triggered, this, &MainWindow::preference);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
     connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
+
+    connect(ui->actionDuplicate, &QAction::triggered, this, &MainWindow::duplicate);
+    connect(ui->actionFlipHorizontal, &QAction::triggered, this, &MainWindow::flipHorizontal);
+    connect(ui->actionFlipVertical, &QAction::triggered, this, &MainWindow::flipVertical);
+    connect(ui->actionRotateCW90, &QAction::triggered, this, &MainWindow::rotateCW90);
+    connect(ui->actionRotateCCW90, &QAction::triggered, this, &MainWindow::rotateCCW90);
 
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::updateAction);
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::updateStatusBar);
@@ -188,6 +195,12 @@ void MainWindow::updateAction()
     ui->actionBrightnessContrast->setEnabled(activeMdiChild());
     ui->actionToneCurve->setEnabled(activeMdiChild());
 
+    ui->actionDuplicate->setEnabled(activeMdiChild());
+    ui->actionRotateCW90->setEnabled(activeMdiChild());
+    ui->actionRotateCCW90->setEnabled(activeMdiChild());
+    ui->actionFlipHorizontal->setEnabled(activeMdiChild());
+    ui->actionFlipVertical->setEnabled(activeMdiChild());
+
     if (activeMdiChild()) {
         connect(ui->actionUndo, &QAction::triggered, activeMdiChild(), &MdiChild::undo);
         connect(ui->actionRedo, &QAction::triggered, activeMdiChild(), &MdiChild::redo);
@@ -331,6 +344,35 @@ void MainWindow::saveAs()
     }
 }
 
+void MainWindow::duplicate()
+{
+    //TODO
+}
+
+void MainWindow::flipHorizontal()
+{
+    if (activeMdiChild())
+        activeMdiChild()->flipHorizontal();
+}
+
+void MainWindow::flipVertical()
+{
+    if (activeMdiChild())
+        activeMdiChild()->flipVertical();
+}
+
+void MainWindow::rotateCW90()
+{
+    if (activeMdiChild())
+        activeMdiChild()->rotateCW90();
+}
+
+void MainWindow::rotateCCW90()
+{
+    if (activeMdiChild())
+        activeMdiChild()->rotateCCW90();
+}
+
 void MainWindow::zoom(qreal factor)
 {
     if (activeMdiChild())
@@ -391,5 +433,6 @@ void MainWindow::preference()
 
 void MainWindow::about()
 {
-    //TODO
+    VersionDialog dialog(this);
+    dialog.exec();
 }

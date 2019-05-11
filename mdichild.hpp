@@ -33,6 +33,10 @@ public slots:
     void fitToWindow();
     void brightnessContrast();
     void toneCurve();
+    void flipHorizontal();
+    void flipVertical();
+    void rotateCW90();
+    void rotateCCW90();
 
     void undo();
     void redo();

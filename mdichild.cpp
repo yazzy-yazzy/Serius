@@ -306,3 +306,23 @@ QUndoStack *MdiChild::undoStack() const
 {
     return _undoStack;
 }
+
+void MdiChild::flipHorizontal()
+{
+
+}
+
+void MdiChild::flipVertical()
+{
+
+}
+
+void MdiChild::rotateCW90()
+{
+
+}
+
+void MdiChild::rotateCCW90()
+{
+
+}

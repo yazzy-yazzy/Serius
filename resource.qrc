@@ -17,6 +17,14 @@
         <file alias="qt">assets/image/qt-designer-2.png</file>
         <file alias="brightness-contrast">assets/image/thumbnail.png</file>
         <file alias="about">assets/image/help-about-2.png</file>
+        <file alias="copy">assets/image/edit-copy.png</file>
+        <file alias="flip-horizontal">assets/image/object-flip-horizontal.png</file>
+        <file alias="flip-vertical">assets/image/object-flip-vertical.png</file>
+        <file alias="rotate-ccw90">assets/image/object-rotate-left.png</file>
+        <file alias="rotate-cw90">assets/image/object-rotate-right.png</file>
+        <file alias="dock-close">assets/image/view-right-close.png</file>
+        <file alias="dock-open">assets/image/view-right-new-3.png</file>
+        <file alias="dock">assets/image/view-sidetree-2.png</file>
     </qresource>
     <qresource prefix="/">
         <file>assets/translate/language_en.qm</file>
