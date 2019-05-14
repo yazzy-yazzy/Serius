@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
 
     connect(ui->actionDuplicate, &QAction::triggered, this, &MainWindow::duplicate);
+    connect(ui->actionCanvasSize, &QAction::triggered, this, &MainWindow::crop);
     connect(ui->actionFlipHorizontal, &QAction::triggered, this, &MainWindow::flipHorizontal);
     connect(ui->actionFlipVertical, &QAction::triggered, this, &MainWindow::flipVertical);
     connect(ui->actionRotateCW90, &QAction::triggered, this, &MainWindow::rotateCW90);
@@ -196,6 +197,7 @@ void MainWindow::updateAction()
     ui->actionToneCurve->setEnabled(activeMdiChild());
 
     ui->actionDuplicate->setEnabled(activeMdiChild());
+    ui->actionCanvasSize->setEnabled(activeMdiChild());
     ui->actionRotateCW90->setEnabled(activeMdiChild());
     ui->actionRotateCCW90->setEnabled(activeMdiChild());
     ui->actionFlipHorizontal->setEnabled(activeMdiChild());
@@ -250,7 +252,7 @@ void MainWindow::updateStatusBar()
     const QString &fileName = activeMdiChild()->windowFilePath();
 
     const QString message = tr("\"%1\", %2x%3, Depth: %4")
-        .arg(QDir::toNativeSeparators(fileName)).arg(image.width()).arg(image.height()).arg(image.depth());
+        .arg(QDir::toNativeSeparators(fileName)).arg(image.width()).arg(image.height()).arg(image.bitPlaneCount());
     ui->statusBar->showMessage(message);
 }
 
@@ -347,6 +349,12 @@ void MainWindow::saveAs()
 void MainWindow::duplicate()
 {
     //TODO
+}
+
+void MainWindow::crop()
+{
+    if (activeMdiChild())
+        activeMdiChild()->crop();
 }
 
 void MainWindow::flipHorizontal()

@@ -26,6 +26,7 @@ private slots:
     void brightnessContrast();
     void toneCurve();
     void duplicate();
+    void crop();
     void flipHorizontal();
     void flipVertical();
     void rotateCW90();

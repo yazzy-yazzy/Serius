@@ -25,9 +25,21 @@
         <file alias="dock-close">assets/image/view-right-close.png</file>
         <file alias="dock-open">assets/image/view-right-new-3.png</file>
         <file alias="dock">assets/image/view-sidetree-2.png</file>
+        <file alias="crop">assets/image/transform-crop-and-resize.png</file>
     </qresource>
     <qresource prefix="/">
         <file>assets/translate/language_en.qm</file>
         <file>assets/translate/language_ja.qm</file>
+    </qresource>
+    <qresource prefix="/images/arrow">
+        <file alias="anchor">assets/image/arrow/anchor.png</file>
+        <file alias="bottom-left">assets/image/arrow/arrow_left_down.png</file>
+        <file alias="top-left">assets/image/arrow/arrow_left_up.png</file>
+        <file alias="left">assets/image/arrow/arrow_left.png</file>
+        <file alias="bottom-right">assets/image/arrow/arrow_right_down.png</file>
+        <file alias="top-right">assets/image/arrow/arrow_right_up.png</file>
+        <file alias="right">assets/image/arrow/arrow_right.png</file>
+        <file alias="bottom">assets/image/arrow/arrow_down.png</file>
+        <file alias="top">assets/image/arrow/arrow_up.png</file>
     </qresource>
 </RCC>

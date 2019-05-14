@@ -3,6 +3,7 @@
 #include <QtWidgets>
 
 #include "brightnesscontrastdialog.hpp"
+#include "canvassizedialog.hpp"
 #include "tonecurvedialog.hpp"
 #include "utility.hpp"
 
@@ -469,4 +470,14 @@ void MdiChild::rotateCW90()
 void MdiChild::rotateCCW90()
 {
     undoStack()->push(new RotateCCW90Command(this));
+}
+
+void MdiChild::crop()
+{
+    CanvasSizeDialog dialog;
+    dialog.setImage(&_image);
+
+    if (QDialog::Accepted == dialog.exec()) {
+        //TODO
+    }
 }

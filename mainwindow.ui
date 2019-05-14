@@ -127,6 +127,7 @@
     </widget>
     <addaction name="menuAdjustments"/>
     <addaction name="actionDuplicate"/>
+    <addaction name="actionCanvasSize"/>
     <addaction name="menuRotate"/>
     <addaction name="menuMirror"/>
    </widget>
@@ -713,6 +714,24 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+R</string>
+   </property>
+  </action>
+  <action name="actionCanvasSize">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/images/crop</normaloff>:/images/crop</iconset>
+   </property>
+   <property name="text">
+    <string>Canvas Size...</string>
+   </property>
+   <property name="toolTip">
+    <string>Canvas crop and resize</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
    </property>
   </action>
  </widget>

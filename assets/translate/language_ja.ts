@@ -35,6 +35,87 @@
     </message>
 </context>
 <context>
+    <name>CanvasSizeDialog</name>
+    <message>
+        <location filename="../../canvassizedialog.ui" line="14"/>
+        <source>Canvas Size</source>
+        <translation>カンバス サイズ</translation>
+    </message>
+    <message>
+        <location filename="../../canvassizedialog.ui" line="54"/>
+        <location filename="../../canvassizedialog.ui" line="147"/>
+        <source>Height:</source>
+        <translation>高さ:</translation>
+    </message>
+    <message>
+        <location filename="../../canvassizedialog.ui" line="71"/>
+        <location filename="../../canvassizedialog.ui" line="78"/>
+        <source>pixels</source>
+        <translation>ピクセル</translation>
+    </message>
+    <message>
+        <location filename="../../canvassizedialog.ui" line="85"/>
+        <location filename="../../canvassizedialog.ui" line="154"/>
+        <source>Width:</source>
+        <translation>幅:</translation>
+    </message>
+    <message>
+        <location filename="../../canvassizedialog.ui" line="234"/>
+        <source>Anchor:</source>
+        <translation>基準位置:</translation>
+    </message>
+    <message>
+        <location filename="../../canvassizedialog.ui" line="270"/>
+        <source>Reelative</source>
+        <translation>相対</translation>
+    </message>
+    <message>
+        <location filename="../../canvassizedialog.ui" line="287"/>
+        <source>Canvas extension color:</source>
+        <translation>カンバス拡張カラー:</translation>
+    </message>
+    <message>
+        <location filename="../../canvassizedialog.cpp" line="19"/>
+        <source>Foreground</source>
+        <translation>前景色</translation>
+    </message>
+    <message>
+        <location filename="../../canvassizedialog.cpp" line="20"/>
+        <source>Background</source>
+        <translation>背景色</translation>
+    </message>
+    <message>
+        <location filename="../../canvassizedialog.cpp" line="21"/>
+        <source>White</source>
+        <translation>白</translation>
+    </message>
+    <message>
+        <location filename="../../canvassizedialog.cpp" line="22"/>
+        <source>Black</source>
+        <translation>黒</translation>
+    </message>
+    <message>
+        <location filename="../../canvassizedialog.cpp" line="23"/>
+        <source>Gray</source>
+        <translation>グレー</translation>
+    </message>
+    <message>
+        <location filename="../../canvassizedialog.cpp" line="24"/>
+        <source>Other...</source>
+        <translation>その他...</translation>
+    </message>
+    <message>
+        <location filename="../../canvassizedialog.cpp" line="45"/>
+        <source>Current Size: %1</source>
+        <translation>現在のファイルサイズ: %1</translation>
+    </message>
+    <message>
+        <location filename="../../canvassizedialog.cpp" line="83"/>
+        <source>New Size: %1</source>
+        <translation>変更後のファイルサイズ: %1</translation>
+    </message>
+</context>
+<context>
     <name>ChannelWidget</name>
     <message>
         <location filename="../../channelwidget.cpp" line="12"/>
@@ -128,154 +209,169 @@
         <translation>鏡像</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="135"/>
+        <location filename="../../mainwindow.ui" line="136"/>
         <source>Filter</source>
         <translation>フィルター</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="314"/>
-        <location filename="../../mainwindow.ui" line="622"/>
+        <location filename="../../mainwindow.ui" line="315"/>
+        <location filename="../../mainwindow.ui" line="623"/>
         <source>Undo Stack</source>
         <translation>操作履歴</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="346"/>
+        <location filename="../../mainwindow.ui" line="347"/>
         <source>Open...</source>
         <translation>開く...</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="349"/>
+        <location filename="../../mainwindow.ui" line="350"/>
         <source>Open an existing file</source>
         <translation>既存ファイルを開く</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="352"/>
+        <location filename="../../mainwindow.ui" line="353"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="357"/>
+        <location filename="../../mainwindow.ui" line="358"/>
         <source>Exit</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="360"/>
+        <location filename="../../mainwindow.ui" line="361"/>
         <source>Exit this application</source>
         <translation>このアプリケーションを終了する</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="372"/>
+        <location filename="../../mainwindow.ui" line="373"/>
         <source>Zoom In</source>
         <translation>ズームイン</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="375"/>
+        <location filename="../../mainwindow.ui" line="376"/>
         <source>Zoom in</source>
         <translation>ズームイン</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="378"/>
+        <location filename="../../mainwindow.ui" line="379"/>
         <source>Ctrl+Shift+;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="390"/>
+        <location filename="../../mainwindow.ui" line="391"/>
         <source>Zoom Out</source>
         <translation>ズームアウト</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="393"/>
+        <location filename="../../mainwindow.ui" line="394"/>
         <source>Zoom out</source>
         <translation>ズームアウト</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="396"/>
+        <location filename="../../mainwindow.ui" line="397"/>
         <source>Ctrl+-</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="408"/>
+        <location filename="../../mainwindow.ui" line="409"/>
         <source>100%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="411"/>
+        <location filename="../../mainwindow.ui" line="412"/>
         <source>Zoom 100%</source>
         <translation>等倍</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="414"/>
+        <location filename="../../mainwindow.ui" line="415"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="640"/>
+        <location filename="../../mainwindow.ui" line="641"/>
         <source>Duplicate</source>
         <translation>複製</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="643"/>
+        <location filename="../../mainwindow.ui" line="644"/>
         <source>Ctrl+D</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="655"/>
+        <location filename="../../mainwindow.ui" line="656"/>
         <source>Horizontal</source>
         <translation>水平</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="658"/>
+        <location filename="../../mainwindow.ui" line="659"/>
         <source>Flip Horizontal</source>
         <translation>鏡像（水平）</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="661"/>
+        <location filename="../../mainwindow.ui" line="662"/>
         <source>Ctrl+Shift+H</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="673"/>
+        <location filename="../../mainwindow.ui" line="674"/>
         <source>Vertical</source>
         <translation>垂直</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="676"/>
+        <location filename="../../mainwindow.ui" line="677"/>
         <source>Flip Vertical</source>
         <translation>鏡像（垂直）</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="679"/>
+        <location filename="../../mainwindow.ui" line="680"/>
         <source>Ctrl+Shift+V</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="691"/>
+        <location filename="../../mainwindow.ui" line="692"/>
         <source>CW90</source>
         <translation>90度（時計回り）</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="694"/>
+        <location filename="../../mainwindow.ui" line="695"/>
         <source>Rotate clock-wise 90</source>
         <translation>90度回転（時計回り）</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="697"/>
+        <location filename="../../mainwindow.ui" line="698"/>
         <source>Ctrl+R</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="709"/>
+        <location filename="../../mainwindow.ui" line="710"/>
         <source>CCW90</source>
         <translation>90度（反時計回り）</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="712"/>
+        <location filename="../../mainwindow.ui" line="713"/>
         <source>Rotate counter-clock-wise 90</source>
         <translation>90度回転（反時計回り）</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="715"/>
+        <location filename="../../mainwindow.ui" line="716"/>
         <source>Ctrl+Shift+R</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="728"/>
+        <source>Canvas Size...</source>
+        <translation>カンバス サイズ...</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="731"/>
+        <source>Canvas crop and resize</source>
+        <translation>カンバスの切り抜き＆リサイズ</translation>
+    </message>
+    <message>
+        <location filename="../../mainwindow.ui" line="734"/>
+        <source>Ctrl+Shift+C</source>
         <translation></translation>
     </message>
     <message>
@@ -283,130 +379,130 @@
         <translation type="vanished">ウインドウに合わせる</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="426"/>
+        <location filename="../../mainwindow.ui" line="427"/>
         <source>Fit to Window</source>
         <translation>ウインドウに合わせる</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="429"/>
+        <location filename="../../mainwindow.ui" line="430"/>
         <source>Fit to window</source>
         <translation>ウインドウに合わせる</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="432"/>
+        <location filename="../../mainwindow.ui" line="433"/>
         <source>Ctrl+F</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="444"/>
+        <location filename="../../mainwindow.ui" line="445"/>
         <source>SaveAs...</source>
         <translation>保存...</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="447"/>
+        <location filename="../../mainwindow.ui" line="448"/>
         <source>Save an displaying image</source>
         <translation>画面イメージを保存する</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="463"/>
+        <location filename="../../mainwindow.ui" line="464"/>
         <source>Dock1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="466"/>
-        <location filename="../../mainwindow.ui" line="485"/>
-        <location filename="../../mainwindow.ui" line="504"/>
-        <location filename="../../mainwindow.ui" line="625"/>
+        <location filename="../../mainwindow.ui" line="467"/>
+        <location filename="../../mainwindow.ui" line="486"/>
+        <location filename="../../mainwindow.ui" line="505"/>
+        <location filename="../../mainwindow.ui" line="626"/>
         <source>Show or hide</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="482"/>
+        <location filename="../../mainwindow.ui" line="483"/>
         <source>Dock2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="501"/>
+        <location filename="../../mainwindow.ui" line="502"/>
         <source>Dock3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="516"/>
+        <location filename="../../mainwindow.ui" line="517"/>
         <source>Tone Curve...</source>
         <translation>トーンカーブ...</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="519"/>
+        <location filename="../../mainwindow.ui" line="520"/>
         <source>Adjust tonecurve</source>
         <translation>画面イメージをトーンカーブで調整する</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="522"/>
+        <location filename="../../mainwindow.ui" line="523"/>
         <source>Ctrl+T</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="531"/>
+        <location filename="../../mainwindow.ui" line="532"/>
         <source>Preference...</source>
         <translation>環境設定...</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="534"/>
+        <location filename="../../mainwindow.ui" line="535"/>
         <source>Preference setting</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="537"/>
+        <location filename="../../mainwindow.ui" line="538"/>
         <source>Ctrl+,</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="549"/>
+        <location filename="../../mainwindow.ui" line="550"/>
         <source>Brightness/Contrast...</source>
         <translation>明るさ・コントラスト...</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="552"/>
+        <location filename="../../mainwindow.ui" line="553"/>
         <source>Brightness/Contrast</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="555"/>
+        <location filename="../../mainwindow.ui" line="556"/>
         <source>Ctrl+B</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="564"/>
+        <location filename="../../mainwindow.ui" line="565"/>
         <source>About...</source>
         <translation>このアプリケーションについて...</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="576"/>
+        <location filename="../../mainwindow.ui" line="577"/>
         <source>About Qt...</source>
         <translation>Qtについて...</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="591"/>
+        <location filename="../../mainwindow.ui" line="592"/>
         <source>Undo</source>
         <translation>元に戻す</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="594"/>
+        <location filename="../../mainwindow.ui" line="595"/>
         <source>Ctrl+Z</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="606"/>
+        <location filename="../../mainwindow.ui" line="607"/>
         <source>Redo</source>
         <translation>やり直す</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.ui" line="609"/>
+        <location filename="../../mainwindow.ui" line="610"/>
         <source>Ctrl+Shift+Z</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.cpp" line="287"/>
+        <location filename="../../mainwindow.cpp" line="290"/>
         <source>Open File</source>
         <translation>ファイルを開く</translation>
     </message>
@@ -415,12 +511,12 @@
         <translation type="vanished">%1を読み込み出来ませんでした。%2</translation>
     </message>
     <message>
-        <location filename="../../mainwindow.cpp" line="251"/>
+        <location filename="../../mainwindow.cpp" line="254"/>
         <source>&quot;%1&quot;, %2x%3, Depth: %4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../mainwindow.cpp" line="322"/>
+        <location filename="../../mainwindow.cpp" line="325"/>
         <source>Save File As</source>
         <translation>ファイルを保存する</translation>
     </message>
@@ -432,12 +528,12 @@
 <context>
     <name>MdiChild</name>
     <message>
-        <location filename="../../mdichild.cpp" line="240"/>
+        <location filename="../../mdichild.cpp" line="370"/>
         <source>Cannot load %1: %2</source>
         <translation>%1を読み込み出来ませんでした。%2</translation>
     </message>
     <message>
-        <location filename="../../mdichild.cpp" line="268"/>
+        <location filename="../../mdichild.cpp" line="399"/>
         <source>Cannot write %1: %2</source>
         <translation>%1を保存出来ませんでした。%2</translation>
     </message>
@@ -626,6 +722,29 @@
         <location filename="../../tonecurvedialog.cpp" line="131"/>
         <source>%1/recent/channel</source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>VersionDialog</name>
+    <message>
+        <location filename="../../versiondialog.ui" line="20"/>
+        <source>Dialog</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../versiondialog.cpp" line="11"/>
+        <source>Version: </source>
+        <translation>バージョン:</translation>
+    </message>
+    <message>
+        <location filename="../../versiondialog.cpp" line="12"/>
+        <source>(C) 2019 </source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../versiondialog.cpp" line="14"/>
+        <source>About</source>
+        <translation>バージョン</translation>
     </message>
 </context>
 </TS>

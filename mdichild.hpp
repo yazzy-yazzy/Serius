@@ -32,6 +32,7 @@ public slots:
     void zoomOut();
     void zoomMag();
     void fitToWindow();
+    void crop();
     void brightnessContrast();
     void toneCurve();
     void flipHorizontal();
