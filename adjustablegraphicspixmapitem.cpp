@@ -37,6 +37,11 @@ void AdjustableGraphicsPixmapItem::setImage(const QImage *image)
     _original = image;
 }
 
+void AdjustableGraphicsPixmapItem::setImage(const QImage &image)
+{
+    setImage(&image);
+}
+
 bool AdjustableGraphicsPixmapItem::channelVisibles(Channel::Color channel) const
 {
     return _visibleMap.value(channel, true);

@@ -137,8 +137,137 @@ void FitToWindowCommand::redo()
     _child->scaleEx(factor);
 }
 
+class FlipHorizontalCommand : public QUndoCommand
+{
+public:
+    FlipHorizontalCommand(MdiChild *child, QUndoCommand *parent = nullptr);
 
+    void undo() override;
+    void redo() override;
 
+private:
+    MdiChild *_child;
+};
+
+FlipHorizontalCommand::FlipHorizontalCommand(MdiChild *child, QUndoCommand *parent) :
+    QUndoCommand(parent),
+    _child(child)
+{
+    setText("Flip-Horizontal");
+}
+
+void FlipHorizontalCommand::undo()
+{
+    _child->setImage(_child->image().mirrored(true, false));
+}
+
+void FlipHorizontalCommand::redo()
+{
+    _child->setImage(_child->image().mirrored(true, false));
+}
+
+class FlipVerticalCommand : public QUndoCommand
+{
+public:
+    FlipVerticalCommand(MdiChild *child, QUndoCommand *parent = nullptr);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    MdiChild *_child;
+};
+
+FlipVerticalCommand::FlipVerticalCommand(MdiChild *child, QUndoCommand *parent) :
+    QUndoCommand(parent),
+    _child(child)
+{
+    setText("Flip-Vertical");
+}
+
+void FlipVerticalCommand::undo()
+{
+    _child->setImage(_child->image().mirrored(false, true));
+}
+
+void FlipVerticalCommand::redo()
+{
+    _child->setImage(_child->image().mirrored(false, true));
+}
+
+class RotateCW90Command : public QUndoCommand
+{
+public:
+    RotateCW90Command(MdiChild *child, QUndoCommand *parent = nullptr);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    MdiChild *_child;
+};
+
+RotateCW90Command::RotateCW90Command(MdiChild *child, QUndoCommand *parent) :
+    QUndoCommand(parent),
+    _child(child)
+{
+    setText("Rotate90 (CW)");
+}
+
+void RotateCW90Command::undo()
+{
+    QTransform matrix;
+    matrix.rotate(-90);
+
+    _child->setImage(_child->image().transformed(matrix));
+    _child->parentWidget()->resize(_child->parentWidget()->size().transposed());
+}
+
+void RotateCW90Command::redo()
+{
+    QTransform matrix;
+    matrix.rotate(90);
+
+    _child->setImage(_child->image().transformed(matrix));
+    _child->parentWidget()->resize(_child->parentWidget()->size().transposed());
+}
+
+class RotateCCW90Command : public QUndoCommand
+{
+public:
+    RotateCCW90Command(MdiChild *child, QUndoCommand *parent = nullptr);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    MdiChild *_child;
+};
+
+RotateCCW90Command::RotateCCW90Command(MdiChild *child, QUndoCommand *parent) :
+    QUndoCommand(parent),
+    _child(child)
+{
+    setText("Rotate90 (CCW)");
+}
+
+void RotateCCW90Command::undo()
+{
+    QTransform matrix;
+    matrix.rotate(90);
+
+    _child->setImage(_child->image().transformed(matrix));
+    _child->parentWidget()->resize(_child->parentWidget()->size().transposed());
+}
+
+void RotateCCW90Command::redo()
+{
+    QTransform matrix;
+    matrix.rotate(-90);
+
+    _child->setImage(_child->image().transformed(matrix));
+    _child->parentWidget()->resize(_child->parentWidget()->size().transposed());
+}
 
 
 MdiChild::MdiChild(QWidget *parent) :
@@ -234,8 +363,8 @@ bool MdiChild::loadFile(const QString &filename)
     QImageReader reader(filename);
     reader.setAutoTransform(false);
 
-    _image = reader.read();
-    if (_image.isNull()) {
+    QImage image = reader.read();
+    if (image.isNull()) {
         QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
                                  tr("Cannot load %1: %2")
                                  .arg(QDir::toNativeSeparators(filename), reader.errorString()));
@@ -243,8 +372,9 @@ bool MdiChild::loadFile(const QString &filename)
     }
 
     _pixmapItem->clear();
-    _pixmapItem->setImage(&_image);
-    _pixmapItem->redraw();
+
+    setImage(image);
+
     _pixmapItem->setVisible(true);
 
     _scene->setSceneRect(0, 0, _image.width(), _image.height());
@@ -273,6 +403,15 @@ bool MdiChild::saveFile(const QString &filename)
     return true;
 }
 
+void MdiChild::setImage(const QImage &image)
+{
+    _image = image;
+    _pixmapItem->setImage(&_image);
+    _pixmapItem->redraw();
+
+    _scene->setSceneRect(0, 0, _image.width(), _image.height());
+}
+
 void MdiChild::ensureVisible(const QRectF &rect)
 {
 //    QGraphicsView::ensureVisible(rect);
@@ -283,6 +422,11 @@ void MdiChild::ensureVisible(const QRectF &rect)
 }
 
 const AdjustableGraphicsPixmapItem *MdiChild::pixmapItem() const
+{
+    return _pixmapItem;
+}
+
+AdjustableGraphicsPixmapItem *MdiChild::pixmapItem()
 {
     return _pixmapItem;
 }
@@ -309,20 +453,20 @@ QUndoStack *MdiChild::undoStack() const
 
 void MdiChild::flipHorizontal()
 {
-
+    undoStack()->push(new FlipHorizontalCommand(this));
 }
 
 void MdiChild::flipVertical()
 {
-
+    undoStack()->push(new FlipVerticalCommand(this));
 }
 
 void MdiChild::rotateCW90()
 {
-
+    undoStack()->push(new RotateCW90Command(this));
 }
 
 void MdiChild::rotateCCW90()
 {
-
+    undoStack()->push(new RotateCCW90Command(this));
 }

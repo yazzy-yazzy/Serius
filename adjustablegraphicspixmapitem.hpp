@@ -16,6 +16,7 @@ public:
     AdjustableGraphicsPixmapItem(const QPixmap &pixmap, QGraphicsItem *parent = nullptr);
     ~AdjustableGraphicsPixmapItem() override;
 
+    void setImage(const QImage &image);
     void setImage(const QImage *image);
 
     bool channelVisibles(Channel::Color channel) const;

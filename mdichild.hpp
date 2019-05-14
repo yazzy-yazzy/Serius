@@ -22,6 +22,7 @@ public:
 
     const QImage &image() const;
     const AdjustableGraphicsPixmapItem *pixmapItem() const;
+    AdjustableGraphicsPixmapItem *pixmapItem();
     qreal zoomF() const;
     QUndoStack *undoStack() const;
 
@@ -42,6 +43,8 @@ public slots:
     void redo();
 
     void ensureVisible(const QRectF &roi);
+
+    void setImage(const QImage &image);
 
 signals:
     bool canUndoChanged(bool canUndo);
