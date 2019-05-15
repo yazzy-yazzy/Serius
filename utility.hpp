@@ -24,6 +24,8 @@ namespace Utility
     QImage convert(QImage &source, const QMap<int, int> &lut);
     QImage convert(QImage &source, const QMap<int, int> &lutR, const QMap<int, int> &lutG, const QMap<int, int> &lutB);
     QImage erase(QImage &source, const QList<Channel::Color> &channel);
+
+    QImage convolute(QImage &dstImage, const QImage &srcImage, const QList<qreal> &kernel, int kernelWidth, int kernelHeight);
 }
 
 #endif // UTILITY_HPP

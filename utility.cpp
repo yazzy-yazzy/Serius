@@ -208,3 +208,48 @@ QImage Utility::erase(QImage &source, const QList<Channel::Color> &channel)
 
     return source;
 }
+
+QImage Utility::convolute(QImage &dest, const QImage &source, const QList<qreal> &kernel, int kernelWidth, int kernelHeight)
+{
+    for (int y = 0; y < source.height(); y++) {
+        for (int x = 0; x < source.width(); x++) {
+            qreal total = 0;
+            qreal red = 0;
+            qreal green = 0;
+            qreal blue = 0;
+
+            for (int k = 0; k < kernel.size(); k++) {
+                int kx = ((k % kernelWidth) + 1) - (kernelWidth - 1);
+                int ky = ((k / kernelHeight) + 1) - (kernelHeight - 1);
+                int _x = x + kx;
+                int _y = y + ky;
+
+                if (_x < 0)
+                    _x = source.width() + _x;
+                if (_x >= source.width())
+                    _x = source.width() % _x;
+                if (_y < 0)
+                    _y = source.height() + _y;
+                if (_y >= source.height())
+                    _y = source.height() % _y;
+
+                const qreal bias  = kernel[k];
+
+                total += bias;
+                red += qRed(source.pixel(_x, _y)) * bias;
+                green += qGreen(source.pixel(_x, _y)) * bias;
+                blue += qBlue(source.pixel(_x, _y)) * bias;
+            }
+
+            QRgb rgb;
+            if (qFuzzyCompare(total, 0))
+                rgb = qRgb(qBound(0, qRound(red), 255), qBound(0, qRound(green), 255), qBound(0, qRound(blue), 255));
+            else
+                rgb = qRgb(qBound(0, qRound(red / total), 255), qBound(0, qRound(green / total), 255), qBound(0, qRound(blue / total), 255));
+
+            dest.setPixelColor(x, y, rgb);
+        }
+    }
+
+    return dest;
+}

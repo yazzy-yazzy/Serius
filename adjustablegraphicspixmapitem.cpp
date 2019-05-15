@@ -72,6 +72,25 @@ void AdjustableGraphicsPixmapItem::redraw()
     if (_original.isNull())
         return;
 
+//    QImage src = _original.copy();
+//    QImage tmp(src.size(), src.format());
+
+//    QList<qreal> kernel;
+//    kernel.append(0);
+//    kernel.append(-2);
+//    kernel.append(0);
+//    kernel.append(-2);
+//    kernel.append(8);
+//    kernel.append(-2);
+//    kernel.append(0);
+//    kernel.append(-2);
+//    kernel.append(0);
+
+//    const int kernelWidth = 3;
+//    const int kernelHeight = 3;
+
+//    Utility::convolute(tmp, src, kernel, kernelWidth, kernelHeight);
+
     QImage tmp = _original.copy();
 
     QList<Channel::Color> list;
@@ -98,6 +117,7 @@ void AdjustableGraphicsPixmapItem::redraw()
     Utility::contrast(tmp, contrast());
 
     QPixmap pixmap = QPixmap::fromImage(tmp);
+
     QGraphicsPixmapItem::setPixmap(pixmap);
     emit pixmapChanged(pixmap);
 
