@@ -130,8 +130,8 @@ void FitToWindowCommand::redo()
 {
     _factor = _child->matrix().m11();
 
-    qreal factorX = static_cast<qreal>(_child->width()) / static_cast<qreal>(_child->image().width());
-    qreal factorY = static_cast<qreal>(_child->height()) / static_cast<qreal>(_child->image().height());
+    qreal factorX = static_cast<qreal>(_child->width()) / static_cast<qreal>(_child->image()->width());
+    qreal factorY = static_cast<qreal>(_child->height()) / static_cast<qreal>(_child->image()->height());
     qreal factor = qMin(factorX, factorY);
 
     _child->resetMatrix();
@@ -159,12 +159,12 @@ FlipHorizontalCommand::FlipHorizontalCommand(MdiChild *child, QUndoCommand *pare
 
 void FlipHorizontalCommand::undo()
 {
-    _child->setImage(_child->image().mirrored(true, false));
+    _child->setImage(_child->image()->mirrored(true, false));
 }
 
 void FlipHorizontalCommand::redo()
 {
-    _child->setImage(_child->image().mirrored(true, false));
+    _child->setImage(_child->image()->mirrored(true, false));
 }
 
 class FlipVerticalCommand : public QUndoCommand
@@ -188,12 +188,12 @@ FlipVerticalCommand::FlipVerticalCommand(MdiChild *child, QUndoCommand *parent) 
 
 void FlipVerticalCommand::undo()
 {
-    _child->setImage(_child->image().mirrored(false, true));
+    _child->setImage(_child->image()->mirrored(false, true));
 }
 
 void FlipVerticalCommand::redo()
 {
-    _child->setImage(_child->image().mirrored(false, true));
+    _child->setImage(_child->image()->mirrored(false, true));
 }
 
 class RotateCW90Command : public QUndoCommand
@@ -220,7 +220,7 @@ void RotateCW90Command::undo()
     QTransform matrix;
     matrix.rotate(-90);
 
-    _child->setImage(_child->image().transformed(matrix));
+    _child->setImage(_child->image()->transformed(matrix));
     _child->parentWidget()->resize(_child->parentWidget()->size().transposed());
 }
 
@@ -229,7 +229,7 @@ void RotateCW90Command::redo()
     QTransform matrix;
     matrix.rotate(90);
 
-    _child->setImage(_child->image().transformed(matrix));
+    _child->setImage(_child->image()->transformed(matrix));
     _child->parentWidget()->resize(_child->parentWidget()->size().transposed());
 }
 
@@ -257,7 +257,7 @@ void RotateCCW90Command::undo()
     QTransform matrix;
     matrix.rotate(90);
 
-    _child->setImage(_child->image().transformed(matrix));
+    _child->setImage(_child->image()->transformed(matrix));
     _child->parentWidget()->resize(_child->parentWidget()->size().transposed());
 }
 
@@ -266,8 +266,179 @@ void RotateCCW90Command::redo()
     QTransform matrix;
     matrix.rotate(-90);
 
-    _child->setImage(_child->image().transformed(matrix));
+    _child->setImage(_child->image()->transformed(matrix));
     _child->parentWidget()->resize(_child->parentWidget()->size().transposed());
+}
+
+class BrightnessContrastCommand : public QUndoCommand
+{
+public:
+    BrightnessContrastCommand(MdiChild *child, int brightness, int contrast, QUndoCommand *parent = nullptr);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    MdiChild *_child;
+
+    int _brightness;
+    int _contrast;
+    int _backupBrightness;
+    int _backupContrast;
+};
+
+BrightnessContrastCommand::BrightnessContrastCommand(MdiChild *child, int brightness, int contrast, QUndoCommand *parent) :
+    QUndoCommand(parent),
+    _child(child),
+    _brightness(brightness),
+    _contrast(contrast),
+    _backupBrightness(0),
+    _backupContrast(0)
+{
+    setText("Brightness/Contrast");
+}
+
+void BrightnessContrastCommand::undo()
+{
+    _child->pixmapItem()->setBrightness(_backupBrightness);
+    _child->pixmapItem()->setContrast(_backupContrast);
+    _child->pixmapItem()->redraw();
+}
+
+void BrightnessContrastCommand::redo()
+{
+    _backupBrightness = _child->pixmapItem()->brightness();
+    _backupContrast = _child->pixmapItem()->contrast();
+
+    _child->pixmapItem()->setBrightness(_brightness);
+    _child->pixmapItem()->setContrast(_contrast);
+    _child->pixmapItem()->redraw();
+}
+
+class ToneCurveCommand : public QUndoCommand
+{
+public:
+    ToneCurveCommand(MdiChild *child, const QMap<Channel::Color, QList<QPointF>> &points, QUndoCommand *parent = nullptr);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    MdiChild *_child;
+
+    QMap<Channel::Color, QList<QPointF>> _points;
+    QMap<Channel::Color, QList<QPointF>> _backupPoints;
+};
+
+ToneCurveCommand::ToneCurveCommand(MdiChild *child, const QMap<Channel::Color, QList<QPointF>> &points, QUndoCommand *parent) :
+    QUndoCommand(parent),
+    _child(child),
+    _points(points)
+{
+    setText("ToneCurve");
+}
+
+void ToneCurveCommand::undo()
+{
+    _child->pixmapItem()->setToneCurves(_backupPoints);
+    _child->pixmapItem()->redraw();
+}
+
+void ToneCurveCommand::redo()
+{
+    _backupPoints = _child->pixmapItem()->toneCurves();
+
+    _child->pixmapItem()->setToneCurves(_points);
+    _child->pixmapItem()->redraw();
+}
+
+class CanvasSizeCommand : public QUndoCommand
+{
+public:
+    CanvasSizeCommand(MdiChild *child, const QSize &size, Anchor anchor, bool relative, QUndoCommand *parent = nullptr);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    MdiChild *_child;
+
+    QSize _size;
+    Anchor _anchor;
+    bool _relative;
+    QImage _backupImage;
+};
+
+CanvasSizeCommand::CanvasSizeCommand(MdiChild *child, const QSize &size, Anchor anchor, bool relative, QUndoCommand *parent) :
+    QUndoCommand(parent),
+    _child(child),
+    _size(size),
+    _anchor(anchor),
+    _relative(relative),
+    _backupImage(QImage())
+{
+    setText("CanvasSize");
+}
+
+void CanvasSizeCommand::undo()
+{
+    if (_backupImage.isNull())
+        return;
+
+    _child->setImage(_backupImage);
+}
+
+void CanvasSizeCommand::redo()
+{
+    if (!_child->pixmapItem())
+        return;
+
+    const QImage *original = _child->image();
+    QRect srcRect(original->rect());
+    QRect dstRect(0, 0, _size.width(), _size.height());
+
+    switch (_anchor) {
+    case Anchor::TopLeft:
+        dstRect.moveTo(0, 0);
+        break;
+    case Anchor::Top:
+        dstRect.moveTo(-(dstRect.width() / 2 - original->width() / 2), 0);
+        break;
+    case Anchor::TopRight:
+        dstRect.moveTo(-(dstRect.width() - original->width()), 0);
+        break;
+    case Anchor::Left:
+        dstRect.moveTo(0, -(dstRect.height() / 2 - original->height() / 2));
+        break;
+    case Anchor::Center:
+        dstRect.moveTo(-(dstRect.width() / 2 - original->width() / 2), -(dstRect.height() / 2 - original->height() / 2));
+        break;
+    case Anchor::Right:
+        dstRect.moveTo(-(dstRect.width() - original->width()), -(dstRect.height() / 2 - original->height() / 2));
+        break;
+    case Anchor::BottomLeft:
+        dstRect.moveTo(0, -(dstRect.height() - original->height()));
+        break;
+    case Anchor::Bottom:
+        dstRect.moveTo(-(dstRect.width() / 2 - original->height() / 2), -(dstRect.height() - original->height()));
+        break;
+    case Anchor::BottomRight:
+        dstRect.moveTo(-(dstRect.width() - original->width()), -(dstRect.height() - original->height()));
+        break;
+    }
+
+    srcRect = srcRect.intersected(dstRect).translated(-srcRect.x(), -srcRect.y());
+    dstRect = dstRect.intersected(srcRect).translated(-dstRect.x(), -dstRect.y());
+
+    _backupImage = original->copy();
+
+    QImage image(_size, original->format());
+
+    QPainter painter(&image);
+    painter.fillRect(QRect(0, 0, _size.width(), _size.height()), Qt::black);    //TBD
+    painter.drawImage(dstRect, *original, srcRect);
+
+    _child->setImage(image);
 }
 
 
@@ -293,11 +464,6 @@ MdiChild::MdiChild(QWidget *parent) :
 QString MdiChild::strippedName(const QString &fullFileName)
 {
     return QFileInfo(fullFileName).fileName();
-}
-
-const QImage &MdiChild::image() const
-{
-    return _image;
 }
 
 void MdiChild::setZoomF(qreal factor)
@@ -332,11 +498,8 @@ void MdiChild::brightnessContrast()
     dialog.setBrightness(_pixmapItem->brightness());
     dialog.setContrast(_pixmapItem->contrast());
 
-    if (QDialog::Accepted == dialog.exec()) {
-        _pixmapItem->setBrightness(dialog.brightness());
-        _pixmapItem->setContrast(dialog.contrast());
-        _pixmapItem->redraw();
-    }
+    if (QDialog::Accepted == dialog.exec())
+        undoStack()->push(new BrightnessContrastCommand(this, dialog.brightness(), dialog.contrast()));
 }
 
 void MdiChild::toneCurve()
@@ -345,19 +508,21 @@ void MdiChild::toneCurve()
     dialog.setToneCurves(_pixmapItem->toneCurves());
     dialog.setHistgrams(_pixmapItem->statistics());
 
-//    connect(&dialog, &ToneCurveDialog::curveChanged, this, &MdiChild::updatePreview, Qt::QueuedConnection);
+    const QMap<Channel::Color, QList<QPointF>> backupToneTurves = _pixmapItem->toneCurves();
+
+    connect(&dialog, &ToneCurveDialog::curveChanged, [=](const QMap<Channel::Color, QList<QPointF>> &points) {
+        _pixmapItem->setToneCurves(points);
+        _pixmapItem->redraw();
+    });
 
     if (QDialog::Accepted == dialog.exec()) {
-        _pixmapItem->setToneCurves(dialog.points());
+        _pixmapItem->setToneCurves(backupToneTurves);
+        undoStack()->push(new ToneCurveCommand(this, dialog.points()));
+    } else {
+        _pixmapItem->setToneCurves(backupToneTurves);
         _pixmapItem->redraw();
     }
 }
-
-//void MdiChild::updatePreview(const QMap<Channel::Color, QList<QPointF>> &map)
-//{
-//    _pixmapItem->setToneCurves(map);
-//    _pixmapItem->redraw();
-//}
 
 bool MdiChild::loadFile(const QString &filename)
 {
@@ -372,20 +537,14 @@ bool MdiChild::loadFile(const QString &filename)
         return false;
     }
 
-    _pixmapItem->clear();
-
     setImage(image);
-
-    _pixmapItem->setVisible(true);
-
-    _scene->setSceneRect(0, 0, _image.width(), _image.height());
 
     setWindowFilePath(filename);
     setWindowTitle(strippedName(filename));
 
     fitToWindow();
-    _undoStack->clear();
 
+    _undoStack->clear();
     return true;
 }
 
@@ -404,13 +563,19 @@ bool MdiChild::saveFile(const QString &filename)
     return true;
 }
 
+const QImage *MdiChild::image() const
+{
+    return (pixmapItem() ? pixmapItem()->image() : nullptr);
+}
+
 void MdiChild::setImage(const QImage &image)
 {
-    _image = image;
-    _pixmapItem->setImage(&_image);
+    _pixmapItem->clear();
+    _pixmapItem->setImage(image);
     _pixmapItem->redraw();
+    _pixmapItem->setVisible(true);
 
-    _scene->setSceneRect(0, 0, _image.width(), _image.height());
+    _scene->setSceneRect(0, 0, image.width(), image.height());
 }
 
 void MdiChild::ensureVisible(const QRectF &rect)
@@ -472,12 +637,11 @@ void MdiChild::rotateCCW90()
     undoStack()->push(new RotateCCW90Command(this));
 }
 
-void MdiChild::crop()
+void MdiChild::canvasSize()
 {
     CanvasSizeDialog dialog;
-    dialog.setImage(&_image);
+    dialog.setImage(image());
 
-    if (QDialog::Accepted == dialog.exec()) {
-        //TODO
-    }
+    if (QDialog::Accepted == dialog.exec())
+        undoStack()->push(new CanvasSizeCommand(this, dialog.newSize(), dialog.anchor(), dialog.relative()));
 }

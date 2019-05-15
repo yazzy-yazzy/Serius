@@ -70,8 +70,14 @@ void TrackingSplineSeries::mouseReleaseEvent(const QPointF &pos)
     startPos = QPointF();
     currentPos = pos;
 
-    clear();
-    append(list);
+    {
+        {
+            QSignalBlocker sb(this);
+            clear();
+            append(list);
+        }
+        emit pointAdded(list.indexOf(pos));
+    }
 
     emit selectionChanged(pos);
     emit mouseReleased(pos);

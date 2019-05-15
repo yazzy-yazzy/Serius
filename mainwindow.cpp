@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
 
     connect(ui->actionDuplicate, &QAction::triggered, this, &MainWindow::duplicate);
-    connect(ui->actionCanvasSize, &QAction::triggered, this, &MainWindow::crop);
+    connect(ui->actionCanvasSize, &QAction::triggered, this, &MainWindow::canvasSize);
     connect(ui->actionFlipHorizontal, &QAction::triggered, this, &MainWindow::flipHorizontal);
     connect(ui->actionFlipVertical, &QAction::triggered, this, &MainWindow::flipVertical);
     connect(ui->actionRotateCW90, &QAction::triggered, this, &MainWindow::rotateCW90);
@@ -144,6 +144,7 @@ void MainWindow::updateNavigator()
     if (activeMdiChild()) {
         connect(activeMdiChild(), &TrackingGraphicsView::roiChanged, ui->navigatorWidget->view(), &NavigatorGraphicsView::drawROI);
         connect(activeMdiChild(), &TrackingGraphicsView::scaleChanged, ui->navigatorWidget, &NavigatorWidget::setZoomF);
+        connect(activeMdiChild()->pixmapItem(), &AdjustableGraphicsPixmapItem::pixmapChanged, this, &MainWindow::updateNavigator);
 
         connect(ui->navigatorWidget, &NavigatorWidget::zoomChangedF, activeMdiChild(), &MdiChild::setZoomF);
         connect(ui->navigatorWidget->view(), &NavigatorGraphicsView::roiChanged, activeMdiChild(), &MdiChild::ensureVisible);
@@ -152,6 +153,7 @@ void MainWindow::updateNavigator()
     foreach (MdiChild *child, deactiveMdiChilds()) {
         disconnect(child, &TrackingGraphicsView::roiChanged, ui->navigatorWidget->view(), &NavigatorGraphicsView::drawROI);
         disconnect(child, &TrackingGraphicsView::scaleChanged, ui->navigatorWidget, &NavigatorWidget::setZoomF);
+        disconnect(child->pixmapItem(), &AdjustableGraphicsPixmapItem::pixmapChanged, this, &MainWindow::updateNavigator);
 
         disconnect(ui->navigatorWidget, &NavigatorWidget::zoomChangedF, child, &MdiChild::setZoomF);
         disconnect(ui->navigatorWidget->view(), &NavigatorGraphicsView::roiChanged, child, &MdiChild::ensureVisible);
@@ -248,11 +250,22 @@ void MainWindow::updateStatusBar()
         return;
     }
 
-    const QImage &image = activeMdiChild()->image();
+    if (activeMdiChild()) {
+        connect(activeMdiChild()->pixmapItem(), &AdjustableGraphicsPixmapItem::imageChanged, this, &MainWindow::updateStatusBar);
+    }
+
+    foreach (MdiChild *child, deactiveMdiChilds()) {
+        disconnect(child->pixmapItem(), &AdjustableGraphicsPixmapItem::imageChanged, this, &MainWindow::updateStatusBar);
+    }
+
+    const QImage *image = activeMdiChild()->image();
+    if (!image)
+        return;
+
     const QString &fileName = activeMdiChild()->windowFilePath();
 
     const QString message = tr("\"%1\", %2x%3, Depth: %4")
-        .arg(QDir::toNativeSeparators(fileName)).arg(image.width()).arg(image.height()).arg(image.bitPlaneCount());
+        .arg(QDir::toNativeSeparators(fileName)).arg(image->width()).arg(image->height()).arg(image->bitPlaneCount());
     ui->statusBar->showMessage(message);
 }
 
@@ -351,10 +364,10 @@ void MainWindow::duplicate()
     //TODO
 }
 
-void MainWindow::crop()
+void MainWindow::canvasSize()
 {
     if (activeMdiChild())
-        activeMdiChild()->crop();
+        activeMdiChild()->canvasSize();
 }
 
 void MainWindow::flipHorizontal()

@@ -58,6 +58,14 @@ void NavigatorGraphicsView::drawROI(const QRectF &roi)
     }
 }
 
+void NavigatorGraphicsView::fitToWindow(const QImage *image)
+{
+    if (!image)
+        return;
+
+    fitToWindow(*image);
+}
+
 void NavigatorGraphicsView::fitToWindow(const QImage &image)
 {
     const int margin = 10;

@@ -16,8 +16,9 @@ public:
     AdjustableGraphicsPixmapItem(const QPixmap &pixmap, QGraphicsItem *parent = nullptr);
     ~AdjustableGraphicsPixmapItem() override;
 
-    void setImage(const QImage &image);
+    const QImage *image() const;
     void setImage(const QImage *image);
+    void setImage(const QImage &image);
 
     bool channelVisibles(Channel::Color channel) const;
     QMap<Channel::Color, bool> channelVisibles() const;
@@ -42,6 +43,7 @@ public slots:
     void setStatistics(const QMap<Channel::Color, Statistics> &map);
 
 signals:
+    void imageChanged(const QImage &image);
     void pixmapChanged(const QPixmap &pixmap);
     void statisticsChanged(const QMap<Channel::Color, Statistics> &map);
 
@@ -52,7 +54,7 @@ private:
     QMap<Channel::Color, bool> _visibleMap;
     int _brightness;
     int _contrast;
-    const QImage *_original;
+    QImage _original;
     QMap<Channel::Color, QList<QPointF>> _curveMap;
     QMap<Channel::Color, Statistics> _statMap;
 };

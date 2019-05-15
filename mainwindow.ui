@@ -27,8 +27,14 @@
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <widget class="QMdiArea" name="mdiArea">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
       <property name="background">
-       <brush brushstyle="SolidPattern">
+       <brush brushstyle="NoBrush">
         <color alpha="255">
          <red>35</red>
          <green>35</green>
@@ -659,7 +665,7 @@
     <string>Flip Horizontal</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+H</string>
+    <string>Ctrl+M</string>
    </property>
   </action>
   <action name="actionFlipVertical">
@@ -677,7 +683,7 @@
     <string>Flip Vertical</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+V</string>
+    <string>Ctrl+Shift+M</string>
    </property>
   </action>
   <action name="actionRotateCW90">

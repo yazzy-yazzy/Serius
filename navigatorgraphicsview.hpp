@@ -16,6 +16,7 @@ public:
 public slots:
     void drawROI(const QRectF &roi);
     void fitToWindow(const QImage &image);
+    void fitToWindow(const QImage *image);
 
 signals:
     void roiChanged(const QRectF &roi);

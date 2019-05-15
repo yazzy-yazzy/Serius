@@ -138,7 +138,7 @@ void ToneCurveDialog::updateCurvePoints()
     Channel::Color channel = ui->channelComboBox->currentData().value<Channel::Color>();
     pointsMap.insert(channel, ui->widget->points());
 
-//    if (ui->previewCheckBox->isChecked())
-//        emit curveChanged(pointsMap);
+    if (ui->previewCheckBox->isChecked())
+        emit curveChanged(pointsMap);
 }
 

@@ -51,6 +51,38 @@ void CanvasSizeDialog::setImage(const QImage *image)
     ui->heightSpinBox->setValue(image->height());
 }
 
+Anchor CanvasSizeDialog::anchor() const
+{
+    return ui->anchorWidget->anchor();
+}
+
+QSize CanvasSizeDialog::newSize() const
+{
+    return QSize(ui->widthSpinBox->value(), ui->heightSpinBox->value());
+}
+
+void CanvasSizeDialog::setAnchor(Anchor anchor)
+{
+    ui->anchorWidget->setAnchor(anchor);
+}
+
+bool CanvasSizeDialog::relative() const
+{
+    return ui->relativeCheckBox->isChecked();
+}
+
+void CanvasSizeDialog::setRelative(bool relative)
+{
+    return ui->relativeCheckBox->setChecked(relative);
+}
+
+void CanvasSizeDialog::setNewSize(const QSize &size)
+{
+    ui->widthSpinBox->setValue(size.width());
+    ui->heightSpinBox->setValue(size.height());
+}
+
+
 #include <QFileInfo>
 
 QString CanvasSizeDialog::humanReadableSize(qint64 size) const

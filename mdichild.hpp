@@ -20,7 +20,7 @@ public:
     bool loadFile(const QString &filename);
     bool saveFile(const QString &filename);
 
-    const QImage &image() const;
+    const QImage *image() const;
     const AdjustableGraphicsPixmapItem *pixmapItem() const;
     AdjustableGraphicsPixmapItem *pixmapItem();
     qreal zoomF() const;
@@ -32,7 +32,7 @@ public slots:
     void zoomOut();
     void zoomMag();
     void fitToWindow();
-    void crop();
+    void canvasSize();
     void brightnessContrast();
     void toneCurve();
     void flipHorizontal();
@@ -55,7 +55,6 @@ private:
     QString strippedName(const QString &fullFileName);
 
 private:
-    QImage _image;
     QGraphicsScene *_scene;
     AdjustableGraphicsPixmapItem *_pixmapItem;
     QUndoStack *_undoStack;

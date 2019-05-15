@@ -2,6 +2,7 @@
 #define CANVASSIZEDIALOG_HPP
 
 #include "memorizedialog.hpp"
+#include "anchorwidget.hpp"
 
 namespace Ui {
 class CanvasSizeDialog;
@@ -16,6 +17,14 @@ public:
     ~CanvasSizeDialog();
 
     void setImage(const QImage *image);
+
+    Anchor anchor() const;
+    QSize newSize() const;
+    bool relative() const;
+
+    void setAnchor(Anchor anchor);
+    void setNewSize(const QSize &size);
+    void setRelative(bool relative);
 
 private slots:
     void updateNewSize();

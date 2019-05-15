@@ -31,6 +31,7 @@ public:
     ~AnchorWidget();
 
     Anchor anchor() const;
+    void setAnchor(Anchor anchor);
 
 private slots:
     void selectTopLeft();

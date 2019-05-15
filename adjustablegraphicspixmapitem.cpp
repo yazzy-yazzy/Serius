@@ -20,7 +20,7 @@ AdjustableGraphicsPixmapItem::~AdjustableGraphicsPixmapItem()
 
 void AdjustableGraphicsPixmapItem::clear()
 {
-    _original = nullptr;
+    _original = QImage();
 
     _visibleMap.insert(Channel::red, true);
     _visibleMap.insert(Channel::green, true);
@@ -32,14 +32,24 @@ void AdjustableGraphicsPixmapItem::clear()
     _curveMap.clear();
 }
 
-void AdjustableGraphicsPixmapItem::setImage(const QImage *image)
+const QImage *AdjustableGraphicsPixmapItem::image() const
 {
-    _original = image;
+    return &_original;
 }
 
 void AdjustableGraphicsPixmapItem::setImage(const QImage &image)
 {
-    setImage(&image);
+    _original = image.copy();
+
+    emit imageChanged(_original);
+}
+
+void AdjustableGraphicsPixmapItem::setImage(const QImage *image)
+{
+    if (!image)
+        return;
+
+    setImage(*image);
 }
 
 bool AdjustableGraphicsPixmapItem::channelVisibles(Channel::Color channel) const
@@ -59,10 +69,10 @@ void AdjustableGraphicsPixmapItem::setChannelVisible(const QMap<Channel::Color, 
 
 void AdjustableGraphicsPixmapItem::redraw()
 {
-    if (!_original)
+    if (_original.isNull())
         return;
 
-    QImage tmp = _original->copy();
+    QImage tmp = _original.copy();
 
     QList<Channel::Color> list;
     if (!channelVisibles(Channel::red))

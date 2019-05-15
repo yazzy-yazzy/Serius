@@ -76,6 +76,11 @@ Anchor AnchorWidget::anchor() const
     return map.value(buttonGroup->checkedId());
 }
 
+void AnchorWidget::setAnchor(Anchor anchor)
+{
+    buttonGroup->button(map.key(anchor))->click();
+}
+
 void AnchorWidget::selectTopLeft()
 {
     ui->topLeftButton->setIcon(QIcon(":/images/arrow/anchor"));
