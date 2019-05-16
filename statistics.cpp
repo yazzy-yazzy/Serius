@@ -7,11 +7,15 @@
 
 Statistics::Statistics()
 {
+    qRegisterMetaType<Statistics>();
+
     clear();
 }
 
 Statistics::Statistics(const Statistics &x)
 {
+    qRegisterMetaType<Statistics>();
+
     *this = x;
 }
 

@@ -39,6 +39,7 @@ public slots:
     void flipVertical();
     void rotateCW90();
     void rotateCCW90();
+    void filterCustom();
 
     void undo();
     void redo();

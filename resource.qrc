@@ -42,4 +42,7 @@
         <file alias="bottom">assets/image/arrow/arrow_down.png</file>
         <file alias="top">assets/image/arrow/arrow_up.png</file>
     </qresource>
+    <qresource prefix="/animation">
+        <file alias="indicator">assets/animation/indicator.gif</file>
+    </qresource>
 </RCC>

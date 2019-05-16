@@ -37,6 +37,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionRotateCW90, &QAction::triggered, this, &MainWindow::rotateCW90);
     connect(ui->actionRotateCCW90, &QAction::triggered, this, &MainWindow::rotateCCW90);
 
+    connect(ui->actionFilterCustom, &QAction::triggered, this, &MainWindow::filterCustom);
+
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::updateAction);
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::updateStatusBar);
     connect(ui->mdiArea, &QMdiArea::subWindowActivated, this, &MainWindow::updateNavigator);
@@ -204,6 +206,8 @@ void MainWindow::updateAction()
     ui->actionRotateCCW90->setEnabled(activeMdiChild());
     ui->actionFlipHorizontal->setEnabled(activeMdiChild());
     ui->actionFlipVertical->setEnabled(activeMdiChild());
+
+    ui->actionFilterCustom->setEnabled(activeMdiChild());
 
     if (activeMdiChild()) {
         connect(ui->actionUndo, &QAction::triggered, activeMdiChild(), &MdiChild::undo);
@@ -434,6 +438,12 @@ void MainWindow::toneCurve()
 {
     if (activeMdiChild())
         activeMdiChild()->toneCurve();
+}
+
+void MainWindow::filterCustom()
+{
+    if (activeMdiChild())
+        activeMdiChild()->filterCustom();
 }
 
 void MainWindow::preference()

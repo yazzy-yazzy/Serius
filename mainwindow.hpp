@@ -36,6 +36,7 @@ private slots:
     void zoomOut();
     void zoomMag();
     void fitToWindow();
+    void filterCustom();
     void about();
 
     void updateAction();

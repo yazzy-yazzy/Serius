@@ -1,10 +1,13 @@
 #include "mdichild.hpp"
 
 #include <QtWidgets>
+#include <QtConcurrent>
 
 #include "brightnesscontrastdialog.hpp"
+#include "customfilterdialog.hpp"
 #include "canvassizedialog.hpp"
 #include "tonecurvedialog.hpp"
+#include "spinnerdialog.hpp"
 #include "utility.hpp"
 
 class ZoomInCommand : public QUndoCommand
@@ -441,6 +444,91 @@ void CanvasSizeCommand::redo()
     _child->setImage(image);
 }
 
+class FilterCustomCommand : public QUndoCommand
+{
+public:
+    FilterCustomCommand(MdiChild *child, const Kernel &kernel, QUndoCommand *parent = nullptr);
+
+    void undo() override;
+    void redo() override;
+
+private:
+    QImage redoTask();
+    QImage undoTask();
+
+private:
+    MdiChild *_child;
+
+    Kernel _kernel;
+    Kernel _backupKernel;
+};
+
+FilterCustomCommand::FilterCustomCommand(MdiChild *child, const Kernel &kernel, QUndoCommand *parent) :
+    QUndoCommand(parent),
+    _child(child),
+    _kernel(kernel)
+{
+    setText("Filter(Custom)");
+}
+
+void FilterCustomCommand::undo()
+{
+    SpinnerDialog spinner;
+    spinner.show();
+
+    QFuture<QImage> f = QtConcurrent::run(this, &FilterCustomCommand::undoTask);
+    while (true) {
+        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
+        QEventLoop loop;
+        QTimer::singleShot(10, &loop, SLOT(quit()));
+        loop.exec();
+
+        if (f.isCanceled() || f.isFinished())
+            break;
+    }
+
+    f.waitForFinished();
+
+    _child->pixmapItem()->drawPixmap(f);
+}
+
+QImage FilterCustomCommand::undoTask()
+{
+    _child->pixmapItem()->setKernel(_backupKernel);
+    return _child->pixmapItem()->convert();
+}
+
+void FilterCustomCommand::redo()
+{
+    SpinnerDialog spinner;
+    spinner.show();
+
+    QFuture<QImage> f = QtConcurrent::run(this, &FilterCustomCommand::redoTask);
+    while (true) {
+        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
+        QEventLoop loop;
+        QTimer::singleShot(10, &loop, SLOT(quit()));
+        loop.exec();
+
+        if (f.isCanceled() || f.isFinished())
+            break;
+    }
+
+    f.waitForFinished();
+
+    _child->pixmapItem()->drawPixmap(f);
+}
+
+QImage FilterCustomCommand::redoTask()
+{
+    _backupKernel = _child->pixmapItem()->kernel();
+
+    _child->pixmapItem()->setKernel(_kernel);
+    return _child->pixmapItem()->convert();
+}
+
 
 MdiChild::MdiChild(QWidget *parent) :
     TrackingGraphicsView(parent),
@@ -644,4 +732,16 @@ void MdiChild::canvasSize()
 
     if (QDialog::Accepted == dialog.exec())
         undoStack()->push(new CanvasSizeCommand(this, dialog.newSize(), dialog.anchor(), dialog.relative()));
+}
+
+void MdiChild::filterCustom()
+{
+    CustomFilterDialog dialog;
+    dialog.setKernel(pixmapItem()->kernel());
+
+//    Kernel kernel(new int[25] { 0,0,0,0,0, 0,0,-2,0,0, 0,-2,8,-2,0, 0,0,-2,0,0, 0,0,0,0,0 });
+//    dialog.setKernel(kernel);
+
+    if (QDialog::Accepted == dialog.exec())
+        undoStack()->push(new FilterCustomCommand(this, dialog.kernel()));
 }

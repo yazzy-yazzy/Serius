@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts
+QT       += core gui charts concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -48,7 +48,9 @@ SOURCES += \
     mdichild.cpp \
     versiondialog.cpp \
     canvassizedialog.cpp \
-    anchorwidget.cpp
+    anchorwidget.cpp \
+    customfilterdialog.cpp \
+    spinnerdialog.cpp
 
 HEADERS += \
     mainwindow.hpp \
@@ -75,7 +77,10 @@ HEADERS += \
     mdichild.hpp \
     versiondialog.hpp \
     canvassizedialog.hpp \
-    anchorwidget.hpp
+    anchorwidget.hpp \
+    customfilterdialog.hpp \
+    kernel.hpp \
+    spinnerdialog.hpp
 
 FORMS += \
     mainwindow.ui \
@@ -88,7 +93,8 @@ FORMS += \
     brightnesscontrastdialog.ui \
     versiondialog.ui \
     canvassizedialog.ui \
-    anchorwidget.ui
+    anchorwidget.ui \
+    customfilterdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

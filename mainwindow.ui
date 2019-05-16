@@ -141,6 +141,7 @@
     <property name="title">
      <string>Filter</string>
     </property>
+    <addaction name="actionFilterCustom"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -738,6 +739,20 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+C</string>
+   </property>
+  </action>
+  <action name="actionFilterCustom">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Custom...</string>
+   </property>
+   <property name="toolTip">
+    <string>Custom filter</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+@</string>
    </property>
   </action>
  </widget>

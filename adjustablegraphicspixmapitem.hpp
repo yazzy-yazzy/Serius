@@ -5,6 +5,7 @@
 #include <QMap>
 
 #include "channel.hpp"
+#include "kernel.hpp"
 #include "statistics.hpp"
 
 class AdjustableGraphicsPixmapItem : public QObject, public QGraphicsPixmapItem
@@ -32,8 +33,12 @@ public:
     Statistics statistics(Channel::Color channel) const;
     QMap<Channel::Color, Statistics> statistics() const;
 
+    Kernel kernel() const;
+
 public slots:
     void redraw();
+    QImage convert();
+    void drawPixmap(const QImage &image);
     void clear();
 
     void setBrightness(int value);
@@ -41,6 +46,7 @@ public slots:
     void setChannelVisible(const QMap<Channel::Color, bool> &map);
     void setToneCurves(const QMap<Channel::Color, QList<QPointF>> &map);
     void setStatistics(const QMap<Channel::Color, Statistics> &map);
+    void setKernel(const Kernel &kernel);
 
 signals:
     void imageChanged(const QImage &image);
@@ -57,6 +63,7 @@ private:
     QImage _original;
     QMap<Channel::Color, QList<QPointF>> _curveMap;
     QMap<Channel::Color, Statistics> _statMap;
+    Kernel _kernel;
 };
 
 #endif // ADJUSTABLEGRAPHICSPIXMAPITEM_HPP

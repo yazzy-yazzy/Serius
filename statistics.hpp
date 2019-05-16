@@ -1,7 +1,7 @@
 #ifndef STATISTICS_HPP
 #define STATISTICS_HPP
 
-#include <QtGlobal>
+#include <QtCore>
 
 class Statistics
 {
@@ -39,6 +39,8 @@ private:
     int _min;
     int _max;
 };
+
+Q_DECLARE_METATYPE(Statistics)
 
 QDebug operator<<(QDebug d, const Statistics &x);
 

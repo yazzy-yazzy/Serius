@@ -6,11 +6,15 @@
 
 AdjustableGraphicsPixmapItem::AdjustableGraphicsPixmapItem(QGraphicsItem *parent) : QGraphicsPixmapItem(parent)
 {
+    qRegisterMetaType<QMap<Channel::Color, Statistics>>();
+
     clear();
 }
 
 AdjustableGraphicsPixmapItem::AdjustableGraphicsPixmapItem(const QPixmap & pixmap, QGraphicsItem *parent) : QGraphicsPixmapItem (pixmap, parent)
 {
+    qRegisterMetaType<QMap<Channel::Color, Statistics>>();
+
     clear();
 }
 
@@ -30,6 +34,7 @@ void AdjustableGraphicsPixmapItem::clear()
     _contrast = 0;
 
     _curveMap.clear();
+    _kernel.fill(0);
 }
 
 const QImage *AdjustableGraphicsPixmapItem::image() const
@@ -72,26 +77,14 @@ void AdjustableGraphicsPixmapItem::redraw()
     if (_original.isNull())
         return;
 
-//    QImage src = _original.copy();
-//    QImage tmp(src.size(), src.format());
-
-//    QList<qreal> kernel;
-//    kernel.append(0);
-//    kernel.append(-2);
-//    kernel.append(0);
-//    kernel.append(-2);
-//    kernel.append(8);
-//    kernel.append(-2);
-//    kernel.append(0);
-//    kernel.append(-2);
-//    kernel.append(0);
-
-//    const int kernelWidth = 3;
-//    const int kernelHeight = 3;
-
-//    Utility::convolute(tmp, src, kernel, kernelWidth, kernelHeight);
-
-    QImage tmp = _original.copy();
+    QImage tmp;
+    if (_kernel.isValid()) {
+        QImage src = _original.copy();
+        tmp = QImage(src.size(), src.format());
+        Utility::convolute(tmp, src, _kernel);
+    } else {
+        tmp = _original.copy();
+    }
 
     QList<Channel::Color> list;
     if (!channelVisibles(Channel::red))
@@ -122,6 +115,59 @@ void AdjustableGraphicsPixmapItem::redraw()
     emit pixmapChanged(pixmap);
 
     setStatistics(scan(tmp));
+}
+
+QImage AdjustableGraphicsPixmapItem::convert()
+{
+    if (_original.isNull())
+        return QImage();
+
+    QImage tmp;
+    if (_kernel.isValid()) {
+        QImage src = _original.copy();
+        tmp = QImage(src.size(), src.format());
+        Utility::convolute(tmp, src, _kernel);
+    } else {
+        tmp = _original.copy();
+    }
+
+    QList<Channel::Color> list;
+    if (!channelVisibles(Channel::red))
+        list.append(Channel::red);
+    if (!channelVisibles(Channel::green))
+        list.append(Channel::green);
+    if (!channelVisibles(Channel::blue))
+        list.append(Channel::blue);
+
+    Utility::erase(tmp, list);
+
+    QMap<int, int> lutL = Utility::createLUT(_curveMap.value(Channel::luminance));
+    QMap<int, int> lutR = Utility::createLUT(_curveMap.value(Channel::red));
+    QMap<int, int> lutG = Utility::createLUT(_curveMap.value(Channel::green));
+    QMap<int, int> lutB = Utility::createLUT(_curveMap.value(Channel::blue));
+
+    if (lutR.isEmpty() && lutG.isEmpty() && lutB.isEmpty())
+        Utility::convert(tmp, lutL);
+    else
+        Utility::convert(tmp, lutR, lutG, lutB);
+
+    Utility::brightness(tmp, brightness());
+    Utility::contrast(tmp, contrast());
+
+    setStatistics(scan(tmp));
+
+    return tmp;
+}
+
+void AdjustableGraphicsPixmapItem::drawPixmap(const QImage &image)
+{
+    if (image.isNull())
+        return;
+
+    QPixmap pixmap = QPixmap::fromImage(image);
+
+    QGraphicsPixmapItem::setPixmap(pixmap);
+    emit pixmapChanged(pixmap);
 }
 
 int AdjustableGraphicsPixmapItem::brightness() const
@@ -204,4 +250,13 @@ void AdjustableGraphicsPixmapItem::setStatistics(const QMap<Channel::Color, Stat
     emit statisticsChanged(_statMap);
 }
 
+Kernel AdjustableGraphicsPixmapItem::kernel() const
+{
+    return _kernel;
+}
+
+void AdjustableGraphicsPixmapItem::setKernel(const Kernel &kernel)
+{
+    _kernel = kernel;
+}
 

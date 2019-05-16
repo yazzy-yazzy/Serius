@@ -209,8 +209,14 @@ QImage Utility::erase(QImage &source, const QList<Channel::Color> &channel)
     return source;
 }
 
-QImage Utility::convolute(QImage &dest, const QImage &source, const QList<qreal> &kernel, int kernelWidth, int kernelHeight)
+QImage Utility::convolute(QImage &dest, const QImage &source, const Kernel &kernel)
 {
+    QElapsedTimer timer;
+    timer.start();
+
+    if (!kernel.isValid())
+        return dest;
+
     for (int y = 0; y < source.height(); y++) {
         for (int x = 0; x < source.width(); x++) {
             qreal total = 0;
@@ -218,27 +224,29 @@ QImage Utility::convolute(QImage &dest, const QImage &source, const QList<qreal>
             qreal green = 0;
             qreal blue = 0;
 
-            for (int k = 0; k < kernel.size(); k++) {
-                int kx = ((k % kernelWidth) + 1) - (kernelWidth - 1);
-                int ky = ((k / kernelHeight) + 1) - (kernelHeight - 1);
-                int _x = x + kx;
-                int _y = y + ky;
+            for (int ky = 0; ky < kernel.rows(); ky++) {
+                for (int kx = 0; kx < kernel.columns(); kx++) {
+                    int tx = ((kx % kernel.columns()) + 1) - (kernel.columns() - 1);
+                    int ty = ((ky % kernel.rows()) + 1) - (kernel.rows() - 1);
+                    int sx = x + tx;
+                    int sy = y + ty;
 
-                if (_x < 0)
-                    _x = source.width() + _x;
-                if (_x >= source.width())
-                    _x = source.width() % _x;
-                if (_y < 0)
-                    _y = source.height() + _y;
-                if (_y >= source.height())
-                    _y = source.height() % _y;
+                    if (sx < 0)
+                        sx = source.width() + sx;
+                    if (sx >= source.width())
+                        sx = source.width() % sx;
+                    if (sy < 0)
+                        sy = source.height() + sy;
+                    if (sy >= source.height())
+                        sy = source.height() % sy;
 
-                const qreal bias  = kernel[k];
+                    const qreal bias  = kernel(kx, ky);
 
-                total += bias;
-                red += qRed(source.pixel(_x, _y)) * bias;
-                green += qGreen(source.pixel(_x, _y)) * bias;
-                blue += qBlue(source.pixel(_x, _y)) * bias;
+                    total += bias;
+                    red += qRed(source.pixel(sx, sy)) * bias;
+                    green += qGreen(source.pixel(sx, sy)) * bias;
+                    blue += qBlue(source.pixel(sx, sy)) * bias;
+                }
             }
 
             QRgb rgb;
@@ -251,5 +259,6 @@ QImage Utility::convolute(QImage &dest, const QImage &source, const QList<qreal>
         }
     }
 
+    qDebug() << __PRETTY_FUNCTION__ << timer.elapsed();
     return dest;
 }
